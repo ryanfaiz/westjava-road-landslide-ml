@@ -374,6 +374,26 @@
     }
 
     @media (min-width: 768px) {
+      #gis-status-bar {
+        gap: 14px;
+        padding: 6px 12px;
+      }
+
+      #gis-status-bar .font-mono {
+        font-size: 12px;
+        line-height: 16px;
+      }
+
+      #gis-status-bar .material-symbols-outlined {
+        font-size: 16px;
+      }
+
+      #gis-status-bar #status-scale-bar {
+        width: 56px;
+      }
+    }
+
+    @media (min-width: 768px) {
       .mobile-title {
         display: none;
       }
@@ -788,7 +808,7 @@
       <main class="flex-1 min-w-0 flex flex-col overflow-hidden relative">
 
         <!-- 3. CENTER FULL-BLEED INTERACTIVE MAP CANVAS -->
-        <div class="flex-1 min-h-0 relative bg-light-surface-container topo-grid-bg overflow-hidden">
+        <div id="map-canvas-shell" class="flex-1 min-h-0 relative bg-light-surface-container topo-grid-bg overflow-hidden">
           <!-- Interactive Leaflet Map Container -->
           <div id="gis-map" class="w-full h-full z-0"></div>
 
@@ -869,6 +889,7 @@
 
           <!-- Bottom-Left Subtle GIS Status Bar -->
           <div
+            id="gis-status-bar"
             class="absolute bottom-2.5 left-3 z-10 bg-light-surface/95 border border-border-crisp rounded px-2.5 py-1 shadow-sm flex items-center gap-3">
             <div class="flex items-center gap-1.5">
               <span class="material-symbols-outlined text-[14px] text-cobalt-blue" aria-hidden="true">explore</span>
@@ -1281,6 +1302,21 @@
       const statusCoords = document.getElementById('status-coords');
       const statusScale = document.getElementById('status-scale');
       const statusScaleBar = document.getElementById('status-scale-bar');
+      const mapCanvasShell = document.getElementById('map-canvas-shell');
+      const gisStatusBar = document.getElementById('gis-status-bar');
+      let gisStatusBarRequiredWidth = gisStatusBar.offsetWidth;
+
+      function updateGISStatusBarVisibility() {
+        if (gisStatusBar.offsetWidth > 0) {
+          gisStatusBarRequiredWidth = gisStatusBar.offsetWidth;
+        }
+        const hasEnoughWidth = mapCanvasShell.clientWidth >= gisStatusBarRequiredWidth + 24;
+        gisStatusBar.classList.toggle('hidden', !hasEnoughWidth);
+      }
+
+      const mapCanvasResizeObserver = new ResizeObserver(updateGISStatusBarVisibility);
+      mapCanvasResizeObserver.observe(mapCanvasShell);
+      updateGISStatusBarVisibility();
 
       function formatMapDistance(meters) {
         if (meters >= 1000) {
