@@ -1349,8 +1349,12 @@
 
       const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
       const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18 });
+      const satReferenceLayer = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 18 }
+      );
       window.gisMap = map;
-      window.gisBaseLayers = { osm: osmLayer, sat: satLayer };
+      window.gisBaseLayers = { osm: osmLayer, sat: satLayer, satReference: satReferenceLayer };
       window.currentBasemap = 'osm';
       const statusCoords = document.getElementById('status-coords');
       const statusScale = document.getElementById('status-scale');
@@ -1566,12 +1570,14 @@
         if (name === 'sat') {
           map.removeLayer(osmLayer);
           satLayer.addTo(map);
+          satReferenceLayer.addTo(map);
           satButton.className = 'px-2 h-full rounded-sm bg-cobalt-blue text-on-cobalt-blue font-label text-label-sm cursor-pointer transition-colors duration-state-change';
           osmButton.className = 'px-2 h-full rounded-sm text-light-on-surface font-label text-label-sm hover:bg-light-surface cursor-pointer transition-colors duration-state-change';
           document.getElementById('header-search-input').placeholder = 'Cari lokasi dengan Esri...';
           document.getElementById('sidebar-basemap-sat').checked = true;
         } else {
           map.removeLayer(satLayer);
+          map.removeLayer(satReferenceLayer);
           osmLayer.addTo(map);
           osmButton.className = 'px-2 h-full rounded-sm bg-cobalt-blue text-on-cobalt-blue font-label text-label-sm cursor-pointer transition-colors duration-state-change';
           satButton.className = 'px-2 h-full rounded-sm text-light-on-surface font-label text-label-sm hover:bg-light-surface cursor-pointer transition-colors duration-state-change';
@@ -1612,6 +1618,10 @@
           opacity: 0.25,
           fillColor: '#0079C1',
           fillOpacity: 0.08
+        },
+        onEachFeature: (feature, layer) => {
+          const name = feature.properties?.NAMOBJ || feature.properties?.name || 'Provinsi Jawa Barat';
+          layer.bindTooltip(name, { sticky: true });
         }
       });
       wilayahGroup.eachLayer(layer => {
@@ -1952,6 +1962,7 @@
       // Basemap switcher
       document.getElementById('btn-basemap-osm').addEventListener('click', () => {
         map.removeLayer(satLayer);
+        map.removeLayer(satReferenceLayer);
         osmLayer.addTo(map);
         document.getElementById('btn-basemap-osm').className = 'px-2 h-full rounded-sm bg-cobalt-blue text-on-cobalt-blue font-label text-label-sm cursor-pointer transition-colors duration-state-change';
         document.getElementById('btn-basemap-sat').className = 'px-2 h-full rounded-sm text-light-on-surface font-label text-label-sm hover:bg-light-surface cursor-pointer transition-colors duration-state-change';
@@ -1962,6 +1973,7 @@
       document.getElementById('btn-basemap-sat').addEventListener('click', () => {
         map.removeLayer(osmLayer);
         satLayer.addTo(map);
+        satReferenceLayer.addTo(map);
         document.getElementById('btn-basemap-sat').className = 'px-2 h-full rounded-sm bg-cobalt-blue text-on-cobalt-blue font-label text-label-sm cursor-pointer transition-colors duration-state-change';
         document.getElementById('btn-basemap-osm').className = 'px-2 h-full rounded-sm text-light-on-surface font-label text-label-sm hover:bg-light-surface cursor-pointer transition-colors duration-state-change';
         window.currentBasemap = 'sat';
