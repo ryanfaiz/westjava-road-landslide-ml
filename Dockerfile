@@ -10,7 +10,7 @@ WORKDIR /app
 
 COPY requirements.txt ./
 RUN python -m pip install --upgrade pip setuptools wheel && \
-    python -m pip install --only-binary=:all: --no-cache-dir -r requirements.txt
+    python -m pip install --prefer-binary --no-cache-dir -r requirements.txt
 
 COPY app.py ./
 COPY static ./static
