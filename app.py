@@ -325,8 +325,8 @@ def get_privacy_document():
 
 @app.get("/favicon.ico", include_in_schema=False)
 def favicon():
-    return Response(
-        content=b"\x00\x00\x01\x00\x01\x00\x10\x10\x00\x00\x01\x00\x20\x00\x68\x04\x00\x00\x16\x00\x00\x00",
+    return FileResponse(
+        os.path.join(BASE_DIR, "static", "favicon.ico"),
         media_type="image/x-icon",
     )
 
