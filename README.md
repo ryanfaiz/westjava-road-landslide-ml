@@ -52,6 +52,7 @@ Ekstraksi spasial dilakukan pada radius *buffer* $500\text{ m}$ di sekitar 297 s
 | Layer / Variabel | Sumber Resmi | Peran | Karakteristik Statistik |
 | :--- | :--- | :--- | :--- |
 | **Jaringan Jalan Provinsi** | [SIGI Kementerian PUPR](https://sigi.pu.go.id/astv2/) | Batas Spasial | $297$ segmen jalan provinsi dengan *buffer* $500\text{ m}$ |
+| **Batas Wilayah Provinsi Jawa Barat** | [Tanah Air Indonesia](https://tanahair.indonesia.go.id/) | Batas Wilayah Administratif | Provinsi Jawa Barat |
 | **Elevation (Ketinggian)** | [Copernicus DEM 90m](https://dataspace.copernicus.eu/) | Fitur Prediktor | Mean: $463.27 \pm 359.70\text{ m}$ |
 | **Slope (Kemiringan Lereng)** | [Copernicus DEM 90m](https://dataspace.copernicus.eu/) | Fitur Prediktor | Mean: $4.03^\circ \pm 3.87^\circ$ (Maks: $21.87^\circ$) |
 | **Aspect (Arah Hadap Lereng)** | [Copernicus DEM 90m](https://dataspace.copernicus.eu/) | Fitur Sirkular | Mean: $176.42^\circ \pm 109.91^\circ$ ($0.08^\circ - 359.83^\circ$) |
