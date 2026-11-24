@@ -1,0 +1,7 @@
+services:
+  webgis:
+    container_name: westjava-landslide-webgis
+    build: .
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
