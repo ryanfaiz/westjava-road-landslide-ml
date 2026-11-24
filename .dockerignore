@@ -1,0 +1,21 @@
+# Exclude Python virtual environments and generated cache
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Exclude source-control and editor metadata
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Exclude runtime logs and local secret configuration
+*.log
+.env
+.env.*
+
+# Exclude Markdown files under docs; runtime uses .txt legal documents
+docs/*.md

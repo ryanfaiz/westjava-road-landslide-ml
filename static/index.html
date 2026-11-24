@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Geospasial Kerawanan Tanah Longsor</title>
+  <meta name="description" content="WebGIS interaktif untuk pemetaan kerentanan tanah longsor pada koridor jalan provinsi Jawa Barat menggunakan empat model machine learning: Logistic Regression, SVM, Random Forest, dan XGBoost.">
+  <meta name="keywords" content="WebGIS, longsor, kerentanan longsor, Jawa Barat, jalan provinsi, Logistic Regression, SVM, Random Forest, XGBoost, IPB University">
+  <meta name="author" content="Dzaky Naufal Putra Raditio, Ryan Faiz Sanie, Ratu Festiza Alya Ichsan">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#1B263B">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:title" content="WebGIS Kerentanan Longsor Jawa Barat">
+  <meta property="og:description" content="Pemetaan kerentanan longsor dan komparasi empat model machine learning pada koridor jalan provinsi Jawa Barat.">
+  <meta property="og:image" content="/static/logo.webp">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="WebGIS Kerentanan Longsor Jawa Barat">
+  <meta name="twitter:description" content="Pemetaan kerentanan longsor koridor jalan provinsi Jawa Barat berbasis machine learning.">
+  <meta name="twitter:image" content="/static/logo.webp">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "WebGIS Kerentanan Longsor Koridor Jalan Jawa Barat",
+      "applicationCategory": "GeographicApplication",
+      "operatingSystem": "Any",
+      "inLanguage": "id-ID",
+      "description": "Pemetaan kerentanan tanah longsor pada koridor jalan provinsi Jawa Barat menggunakan empat model machine learning.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Sekolah Vokasi IPB University"
+      }
+    }
+  </script>
+  <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+  <link rel="apple-touch-icon" href="/static/logo.webp">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'header-slate': '#1B263B',
+            'on-header-slate': '#F8FAFC',
+            'panel-bg': '#F8FAFC',
+            'border-crisp': '#E2E8F0',
+            'cobalt-blue': '#0079C1',
+            'on-cobalt-blue': '#FFFFFF',
+            'road-vector': '#D35400',
+            'risk-very-low': '#2ECC71',
+            'risk-low': '#27AE60',
+            'risk-medium': '#F1C40F',
+            'risk-high': '#E67E22',
+            'risk-very-high': '#E74C3C',
+            'light-primary': '#00609A',
+            'light-on-primary': '#FFFFFF',
+            'light-primary-container': '#0079C1',
+            'light-on-primary-container': '#FCFCFF',
+            'light-secondary': '#45617E',
+            'light-on-secondary': '#FFFFFF',
+            'light-secondary-container': '#C0DDFF',
+            'light-on-secondary-container': '#18334E',
+            'light-tertiary': '#8E4A00',
+            'light-on-tertiary': '#FFFFFF',
+            'light-tertiary-container': '#B25F02',
+            'light-on-tertiary-container': '#FFFCFF',
+            'light-error': '#BA1A1A',
+            'light-on-error': '#FFFFFF',
+            'light-error-container': '#FFDAD6',
+            'light-on-error-container': '#93000A',
+            'light-background': '#F8FAFC',
+            'light-on-background': '#181C21',
+            'light-surface': '#FFFFFF',
+            'light-surface-dim': '#E2E8F0',
+            'light-surface-bright': '#FFFFFF',
+            'light-surface-container-lowest': '#FFFFFF',
+            'light-surface-container-low': '#F8FAFC',
+            'light-surface-container': '#F1F5F9',
+            'light-surface-container-high': '#E2E8F0',
+            'light-surface-container-highest': '#CBD5E1',
+            'light-on-surface': '#0F172A',
+            'light-surface-variant': '#E2E8F0',
+            'light-on-surface-variant': '#475569',
+            'light-outline': '#64748B',
+            'light-outline-variant': '#E2E8F0',
+            'light-inverse-surface': '#1B263B',
+            'light-inverse-on-surface': '#F8FAFC',
+            'light-inverse-primary': '#9ACBFF',
+            'dark-primary': '#9ACBFF',
+            'dark-on-primary': '#003355',
+            'dark-primary-container': '#0079C1',
+            'dark-on-primary-container': '#FCFCFF',
+            'dark-secondary': '#ADC9EA',
+            'dark-on-secondary': '#14324D',
+            'dark-secondary-container': '#2D4965',
+            'dark-on-secondary-container': '#CFE5FF',
+            'dark-tertiary': '#FFB77F',
+            'dark-on-tertiary': '#4E2600',
+            'dark-tertiary-container': '#B25F02',
+            'dark-on-tertiary-container': '#FFFCFF',
+            'dark-error': '#FFB4AB',
+            'dark-on-error': '#690005',
+            'dark-error-container': '#93000A',
+            'dark-on-error-container': '#FFDAD6',
+            'dark-background': '#101418',
+            'dark-on-background': '#E0E2E9',
+            'dark-surface': '#101418',
+            'dark-surface-dim': '#101418',
+            'dark-surface-bright': '#36393F',
+            'dark-surface-container-lowest': '#0B0F13',
+            'dark-surface-container-low': '#181C21',
+            'dark-surface-container': '#1C2025',
+            'dark-surface-container-high': '#272A2F',
+            'dark-surface-container-highest': '#31353A',
+            'dark-on-surface': '#E0E2E9',
+            'dark-surface-variant': '#404751',
+            'dark-on-surface-variant': '#C0C7D2',
+            'dark-outline': '#8A919C',
+            'dark-outline-variant': '#404751',
+            'dark-inverse-surface': '#E0E2E9',
+            'dark-inverse-on-surface': '#2D3136',
+            'dark-inverse-primary': '#00629E',
+          },
+          borderRadius: {
+            'sm': '2px',
+            'DEFAULT': '4px',
+            'md': '6px',
+            'lg': '8px',
+            'full': '9999px',
+          },
+          spacing: {
+            'gutter-xs': '4px',
+            'gutter-sm': '8px',
+            'gutter-md': '12px',
+            'gutter-lg': '16px',
+            'gutter-xl': '24px',
+            'section': '16px',
+            'page-margin': '12px',
+          },
+          fontFamily: {
+            'headline': ['"Inter"', 'sans-serif'],
+            'title': ['"Inter"', 'sans-serif'],
+            'body': ['"Inter"', 'sans-serif'],
+            'label': ['"Inter"', 'sans-serif'],
+            'mono': ['"JetBrains Mono"', 'monospace'],
+          },
+          fontSize: {
+            'headline-lg': ['18px', { lineHeight: '24px', letterSpacing: '-0.2px', fontWeight: '600' }],
+            'headline-md': ['15px', { lineHeight: '20px', letterSpacing: '-0.1px', fontWeight: '600' }],
+            'title-md': ['13px', { lineHeight: '18px', letterSpacing: '0px', fontWeight: '600' }],
+            'title-sm': ['12px', { lineHeight: '16px', letterSpacing: '0px', fontWeight: '600' }],
+            'body-md': ['12px', { lineHeight: '18px', letterSpacing: '0px', fontWeight: '400' }],
+            'body-sm': ['11px', { lineHeight: '16px', letterSpacing: '0px', fontWeight: '400' }],
+            'label-lg': ['12px', { lineHeight: '16px', letterSpacing: '0.1px', fontWeight: '500' }],
+            'label-md': ['11px', { lineHeight: '14px', letterSpacing: '0.1px', fontWeight: '500' }],
+            'label-sm': ['10px', { lineHeight: '14px', letterSpacing: '0.3px', fontWeight: '600' }],
+            'mono-sm': ['11px', { lineHeight: '16px', letterSpacing: '0px', fontWeight: '500' }],
+          },
+          transitionDuration: {
+            'state-change': '120ms',
+            'surface-enter': '200ms',
+            'surface-exit': '150ms',
+          },
+          transitionDelay: {
+            'state-change': '0ms',
+            'surface-enter': '0ms',
+            'surface-exit': '0ms',
+          },
+          transitionTimingFunction: {
+            'state-change': 'ease-out',
+            'surface-enter': 'cubic-bezier(0.2, 0, 0, 1)',
+            'surface-exit': 'cubic-bezier(0.3, 0, 1, 1)',
+          },
+        },
+      },
+    };
+    if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+  </script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css">
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script>
+    (function () {
+      const originalGetContext = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (type, attributes) {
+        if (type === '2d') {
+          return originalGetContext.call(this, type, Object.assign({}, attributes, { willReadFrequently: true }));
+        }
+        return originalGetContext.call(this, type, attributes);
+      };
+    })();
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%232D6CDF'/%3E%3Ccircle cx='16' cy='16' r='5' fill='white'/%3E%3C/svg%3E">
+  <style>
+    .material-symbols-outlined,
+    .material-symbols-rounded,
+    .material-symbols-sharp,
+    .material-icons {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+
+    .leaflet-container {
+      font-family: "Inter", sans-serif;
+      background-color: #E2E8F0;
+    }
+
+    .leaflet-control-zoom {
+      display: none !important;
+    }
+
+    .leaflet-control-attribution a {
+      color: #004A78 !important;
+    }
+
+    .chirps-gradient {
+      background: linear-gradient(to right, #2563EB, #22C55E, #EF4444);
+    }
+
+    .slope-gradient {
+      background: linear-gradient(to right, #16A34A, #EAB308, #991B1B);
+    }
+
+    .topo-grid-bg {
+      background-image:
+        linear-gradient(to right, rgba(100, 116, 139, 0.12) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(100, 116, 139, 0.12) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+  </style>
+</head>
+
+<body class="h-screen overflow-hidden bg-light-background text-light-on-surface font-body antialiased m-0 p-0">
+  <!-- Root 100vh Locked Enterprise WebGIS Shell -->
+  <div id="app-shell"
+    class="h-screen overflow-hidden flex flex-col bg-light-background text-light-on-surface"
+    data-stitch-vh="min-h-[1024px]===min-h-screen|||max-h-[1024px]===max-h-screen">
+
+    <!-- 1. TOP APPLICATION HEADER BAR (52px height, dark slate #1B263B) -->
+    <header
+      class="relative h-[52px] shrink-0 bg-header-slate text-on-header-slate border-b border-border-crisp px-gutter-lg flex items-center justify-between gap-gutter-md z-30">
+      <!-- Left: GIS Map Icon + Title + Subtitle Badge -->
+      <div class="flex items-center gap-gutter-md min-w-0">
+        <img src="/static/logo.webp" alt="Logo Institut Pertanian Bogor"
+          class="w-9 h-9 object-contain shrink-0 rounded-full border border-white/30 bg-white p-0.5">
+        <div class="flex items-center gap-gutter-sm min-w-0">
+          <h1 class="font-headline text-title-md text-on-header-slate truncate" data-design-text-token="title-md">
+            Portal Geospasial Kerawanan Tanah Longsor
+          </h1>
+        </div>
+      </div>
+
+      <!-- LEGAL DOCUMENT MODAL -->
+      <div id="legal-modal"
+        class="hidden fixed inset-0 z-50 bg-light-on-surface/50 flex items-center justify-center p-gutter-lg"
+        role="dialog" aria-modal="true" aria-labelledby="legal-modal-title">
+        <div class="bg-light-surface border border-border-crisp rounded-md shadow-xl max-w-3xl w-full max-h-[calc(100vh-48px)] overflow-hidden flex flex-col">
+          <header class="shrink-0 flex items-center justify-between px-gutter-lg py-gutter-sm border-b border-border-crisp bg-light-surface-container">
+            <h2 id="legal-modal-title" class="font-headline text-headline-md text-light-on-surface">Informasi Legal</h2>
+            <button id="btn-close-legal-modal" type="button" aria-label="Tutup informasi legal"
+              class="text-light-outline hover:text-light-on-surface cursor-pointer">
+              <span class="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
+            </button>
+          </header>
+          <pre id="legal-modal-content"
+            class="m-0 flex-1 overflow-y-auto whitespace-pre-wrap break-words p-gutter-lg font-body text-body-sm text-light-on-surface-variant"></pre>
+          <footer class="shrink-0 flex justify-end px-gutter-lg py-gutter-sm border-t border-border-crisp">
+            <button id="btn-confirm-legal-modal" type="button"
+              class="px-gutter-lg py-1.5 bg-cobalt-blue text-on-cobalt-blue rounded font-label text-label-md hover:bg-light-primary cursor-pointer">
+              Mengerti
+            </button>
+          </footer>
+        </div>
+      </div>
+
+      <!-- Right: Search + Metodologi Engine + Basemap Switcher + Panel Toggles -->
+      <div class="flex items-center gap-gutter-sm shrink-0">
+        <!-- Search Coordinate / Road Corridor -->
+        <label data-component-id="input-field-icon" data-component-type="input-field" data-component-variant="with-icon"
+          class="relative flex items-center w-56">
+          <span class="material-symbols-outlined text-[16px] text-light-outline absolute left-2.5 pointer-events-none"
+            aria-hidden="true">search</span>
+          <input id="header-search-input" type="search" placeholder="Cari ruas jalan / lat,lon..."
+            aria-label="Cari koordinat atau koridor jalan"
+            class="w-full h-7 pl-8 pr-gutter-sm bg-light-surface text-light-on-surface border border-border-crisp rounded font-body text-body-sm placeholder:text-light-outline focus:outline-none focus:border-cobalt-blue focus:ring-1 focus:ring-cobalt-blue">
+        </label>
+
+        <!-- Metodologi Engine Info Button -->
+        <button id="btn-methodology" data-component-id="button-header-info" data-component-type="button"
+          data-component-variant="secondary" type="button"
+          class="inline-flex items-center gap-1.5 h-7 px-2.5 bg-light-secondary text-on-header-slate border border-light-outline rounded font-label text-label-md hover:bg-cobalt-blue transition-colors duration-state-change ease-state-change cursor-pointer">
+          <span class="material-symbols-outlined text-[15px]" aria-hidden="true">info</span>
+          <span data-design-text-token="label-md">Metodologi Engine</span>
+        </button>
+
+        <!-- Basemap Switcher Toggle -->
+        <div
+          class="inline-flex items-center h-7 bg-light-surface-container-highest rounded p-0.5 border border-light-outline"
+          role="group" aria-label="Basemap Switcher">
+          <button id="btn-basemap-osm" type="button" onclick="switchBasemap('osm')"
+            class="px-2 h-full rounded-sm bg-cobalt-blue text-on-cobalt-blue font-label text-label-sm cursor-pointer transition-colors duration-state-change">
+            <span data-design-text-token="label-sm">OSM</span>
+          </button>
+          <button id="btn-basemap-sat" type="button" onclick="switchBasemap('sat')"
+            class="px-2 h-full rounded-sm text-light-on-surface font-label text-label-sm hover:bg-light-surface cursor-pointer transition-colors duration-state-change">
+            <span data-design-text-token="label-sm">Satelit</span>
+          </button>
+        </div>
+
+        <!-- Layer & Inspector Panel Toggle Buttons -->
+        <div class="flex items-center gap-1 border-l border-light-outline pl-gutter-sm">
+          <button id="btn-toggle-left" data-component-id="button-icon" data-component-type="button"
+            data-component-variant="icon" type="button" title="Toggle Layer &amp; Legenda"
+            aria-label="Toggle Panel Layer Spasial"
+            class="inline-flex items-center justify-center w-7 h-7 rounded bg-cobalt-blue text-on-cobalt-blue hover:bg-light-primary transition-colors duration-state-change cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">layers</span>
+          </button>
+          <button id="btn-toggle-right" data-component-id="button-icon" data-component-type="button"
+            data-component-variant="icon" type="button" title="Toggle Spatial Inspector"
+            aria-label="Toggle Panel Inspector Spasial"
+            class="inline-flex items-center justify-center w-7 h-7 rounded bg-cobalt-blue text-on-cobalt-blue hover:bg-light-primary transition-colors duration-state-change cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">tune</span>
+          </button>
+          <button id="btn-developer-info" type="button" title="Informasi Pengembang dan Sumber Data"
+            aria-label="Informasi Pengembang dan Sumber Data"
+            aria-expanded="false"
+            class="inline-flex items-center justify-center w-7 h-7 rounded bg-light-secondary text-on-header-slate hover:bg-cobalt-blue transition-colors duration-state-change cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]" aria-hidden="true">groups</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="developer-info-panel"
+        class="hidden fixed inset-0 z-50 bg-light-on-surface/50 flex items-center justify-center p-gutter-lg"
+        role="dialog" aria-modal="true" aria-labelledby="developer-info-title"
+        aria-label="Informasi pengembang dan sumber data">
+        <aside class="w-full max-w-lg max-h-[calc(100vh-48px)] overflow-y-auto bg-light-surface text-light-on-surface border border-border-crisp rounded-md shadow-xl">
+        <header class="px-gutter-md py-gutter-sm border-b border-border-crisp bg-light-surface-container flex items-center justify-between">
+          <h2 id="developer-info-title" class="font-title text-title-sm">Pengembang &amp; Sumber Data</h2>
+          <button id="btn-close-developer-info" type="button" aria-label="Tutup informasi"
+            class="text-light-outline hover:text-light-on-surface cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]" aria-hidden="true">close</span>
+          </button>
+        </header>
+        <div class="p-gutter-md flex flex-col gap-gutter-md">
+          <section>
+            <h3 class="font-label text-label-sm uppercase text-light-on-surface-variant mb-1.5">Tim Pengembang</h3>
+            <ul class="flex flex-col gap-1 font-body text-body-sm">
+              <li>Dzaky Naufal Putra Raditio <span class="font-mono text-mono-sm">(J0404241020)</span></li>
+              <li>Ryan Faiz Sanie <span class="font-mono text-mono-sm">(J0404241078)</span></li>
+              <li>Ratu Festiza Alya Ichsan <span class="font-mono text-mono-sm">(J0404241174)</span></li>
+            </ul>
+            <p class="mt-2 font-body text-body-sm text-light-on-surface-variant">
+              Program Studi Teknologi Rekayasa Komputer<br>
+              Sekolah Vokasi<br>
+              IPB University
+            </p>
+            <p class="mt-2 font-label text-label-sm">Copyright 2026</p>
+          </section>
+          <section class="border-t border-border-crisp pt-gutter-md">
+            <h3 class="font-label text-label-sm uppercase text-light-on-surface-variant mb-1.5">Sumber Data</h3>
+            <dl class="flex flex-col gap-2 text-body-sm">
+              <div><dt class="font-label">Koridor Jalan Provinsi</dt><dd><a class="text-cobalt-blue hover:underline" href="https://sigi.pu.go.id/astv2/" target="_blank" rel="noopener noreferrer">sigi.pu.go.id/astv2/</a></dd></div>
+              <div><dt class="font-label">Elevation &amp; Slope</dt><dd><a class="text-cobalt-blue hover:underline" href="https://dataspace.copernicus.eu/" target="_blank" rel="noopener noreferrer">dataspace.copernicus.eu/</a></dd></div>
+              <div><dt class="font-label">Aspect (sin &amp; cos)</dt><dd class="text-light-on-surface-variant">Copernicus DEM 90m</dd></div>
+              <div><dt class="font-label">Rainfall (CHIRPS)</dt><dd><a class="text-cobalt-blue hover:underline" href="https://data.chc.ucsb.edu/products/CHIRPS/" target="_blank" rel="noopener noreferrer">data.chc.ucsb.edu/products/CHIRPS/</a></dd></div>
+              <div><dt class="font-label">Zonasi Gerak Tanah</dt><dd><a class="text-cobalt-blue hover:underline" href="https://vsi.esdm.go.id/portalmbg/" target="_blank" rel="noopener noreferrer">vsi.esdm.go.id/portalmbg/</a></dd></div>
+            </dl>
+          </section>
+        </div>
+        </aside>
+      </div>
+    </header>
+
+    <!-- MAIN WORKSPACE AREA (Left Sidebar + Center Map/Bottom Drawer + Right Sidebar) -->
+    <div class="flex-1 min-h-0 flex overflow-hidden relative">
+
+      <!-- 2. LEFT COLLAPSIBLE SIDEBAR — LAYERS & SPATIAL LEGEND (280px width) -->
+      <aside id="left-sidebar"
+        class="w-[280px] shrink-0 bg-panel-bg border-r border-border-crisp flex flex-col overflow-hidden z-20">
+        <!-- Sidebar Tabs -->
+        <div class="grid grid-cols-2 border-b border-border-crisp bg-light-surface shrink-0" role="tablist">
+          <button id="tab-btn-layers" type="button" role="tab" aria-selected="true"
+            class="py-2.5 px-gutter-sm font-title text-title-sm text-light-primary border-b-2 border-light-primary bg-panel-bg flex items-center justify-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]" aria-hidden="true">layers</span>
+            <span data-design-text-token="title-sm">Layer Spasial</span>
+          </button>
+          <button id="tab-btn-legend" type="button" role="tab" aria-selected="false"
+            class="py-2.5 px-gutter-sm font-title text-title-sm text-light-on-surface-variant border-b-2 border-transparent hover:text-light-on-surface flex items-center justify-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]" aria-hidden="true">legend_toggle</span>
+            <span data-design-text-token="title-sm">Legenda</span>
+          </button>
+        </div>
+
+        <!-- Tab 1 Content: Layer Spasial -->
+        <div id="tab-panel-layers" class="flex-1 overflow-y-auto p-gutter-md flex flex-col gap-gutter-md">
+          <div class="flex items-center justify-between">
+            <span class="font-label text-label-sm uppercase text-light-on-surface-variant"
+              data-design-text-token="label-sm">Daftar Layer (TOC)</span>
+            <span class="font-mono text-mono-sm text-light-outline" data-design-text-token="mono-sm">4 Layer</span>
+          </div>
+
+          <!-- Layer Items -->
+          <div id="layer-list" class="flex flex-col gap-gutter-sm" aria-label="Urutan layer peta">
+            <!-- Layer 1: LR Nodes -->
+            <div id="toc-nodes" data-layer="nodes"
+              class="bg-light-surface border border-border-crisp rounded p-gutter-sm flex flex-col gap-1.5">
+              <div class="flex items-center justify-between gap-1.5">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="layer-drag-handle material-symbols-outlined text-[14px] text-light-outline cursor-grab shrink-0 select-none"
+                    draggable="true"
+                    aria-hidden="true">drag_indicator</span>
+                  <input id="layer-chk-nodes" type="checkbox" checked
+                    class="w-3.5 h-3.5 rounded-sm border-border-crisp text-cobalt-blue focus:ring-cobalt-blue cursor-pointer">
+                  <label for="layer-chk-nodes"
+                    class="font-label text-label-md text-light-on-surface truncate cursor-pointer"
+                    data-design-text-token="label-md">Titik Prediksi Model LR (5-Kelas)</label>
+                </div>
+                <span class="w-2.5 h-2.5 rounded-full bg-risk-high shrink-0"></span>
+              </div>
+              <div class="flex items-center gap-2 pl-5">
+                <span class="font-body text-body-sm text-light-outline" data-design-text-token="body-sm">Opasitas</span>
+                <input id="layer-op-nodes" type="range" min="10" max="100" value="95"
+                  class="w-full h-1 accent-cobalt-blue cursor-pointer">
+              </div>
+            </div>
+
+            <!-- Layer 2: Provincial Roads -->
+            <div id="toc-roads" data-layer="roads"
+              class="bg-light-surface border border-border-crisp rounded p-gutter-sm flex flex-col gap-1.5">
+              <div class="flex items-center justify-between gap-1.5">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="layer-drag-handle material-symbols-outlined text-[14px] text-light-outline cursor-grab shrink-0 select-none"
+                    draggable="true"
+                    aria-hidden="true">drag_indicator</span>
+                  <input id="layer-chk-roads" type="checkbox" checked
+                    class="w-3.5 h-3.5 rounded-sm border-border-crisp text-cobalt-blue focus:ring-cobalt-blue cursor-pointer">
+                  <label for="layer-chk-roads"
+                    class="font-label text-label-md text-light-on-surface truncate cursor-pointer"
+                    data-design-text-token="label-md">Vektor Jaringan Jalan Provinsi</label>
+                </div>
+                <span class="w-4 h-1 bg-road-vector rounded-sm shrink-0"></span>
+              </div>
+              <div class="flex items-center gap-2 pl-5">
+                <span class="font-body text-body-sm text-light-outline" data-design-text-token="body-sm">Opasitas</span>
+                <input id="layer-op-roads" type="range" min="10" max="100" value="90"
+                  class="w-full h-1 accent-cobalt-blue cursor-pointer">
+              </div>
+            </div>
+
+            <!-- Layer 3: CHIRPS Rainfall -->
+            <div id="toc-chirps" data-layer="chirps"
+              class="bg-light-surface border border-border-crisp rounded p-gutter-sm flex flex-col gap-1.5">
+              <div class="flex items-center justify-between gap-1.5">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="layer-drag-handle material-symbols-outlined text-[14px] text-light-outline cursor-grab shrink-0 select-none"
+                    draggable="true"
+                    aria-hidden="true">drag_indicator</span>
+                  <input id="layer-chk-chirps" type="checkbox"
+                    class="w-3.5 h-3.5 rounded-sm border-border-crisp text-cobalt-blue focus:ring-cobalt-blue cursor-pointer">
+                  <label for="layer-chk-chirps"
+                    class="font-label text-label-md text-light-on-surface truncate cursor-pointer"
+                    data-design-text-token="label-md">Heatmap Curah Hujan (CHIRPS)</label>
+                </div>
+                <span class="w-3 h-2.5 rounded-sm chirps-gradient shrink-0"></span>
+              </div>
+              <div class="flex items-center gap-2 pl-5">
+                <span class="font-body text-body-sm text-light-outline" data-design-text-token="body-sm">Opasitas</span>
+                <input id="layer-op-chirps" type="range" min="10" max="100" value="60"
+                  class="w-full h-1 accent-cobalt-blue cursor-pointer">
+              </div>
+            </div>
+
+            <!-- Layer 4: DEM Slope -->
+            <div id="toc-slope" data-layer="slope"
+              class="bg-light-surface border border-border-crisp rounded p-gutter-sm flex flex-col gap-1.5">
+              <div class="flex items-center justify-between gap-1.5">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="layer-drag-handle material-symbols-outlined text-[14px] text-light-outline cursor-grab shrink-0 select-none"
+                    draggable="true"
+                    aria-hidden="true">drag_indicator</span>
+                  <input id="layer-chk-slope" type="checkbox"
+                    class="w-3.5 h-3.5 rounded-sm border-border-crisp text-cobalt-blue focus:ring-cobalt-blue cursor-pointer">
+                  <label for="layer-chk-slope"
+                    class="font-label text-label-md text-light-on-surface truncate cursor-pointer"
+                    data-design-text-token="label-md">Heatmap Kemiringan Lereng (DEM)</label>
+                </div>
+                <span class="w-3 h-2.5 rounded-sm slope-gradient shrink-0"></span>
+              </div>
+              <div class="flex items-center gap-2 pl-5">
+                <span class="font-body text-body-sm text-light-outline" data-design-text-token="body-sm">Opasitas</span>
+                <input id="layer-op-slope" type="range" min="10" max="100" value="55"
+                  class="w-full h-1 accent-cobalt-blue cursor-pointer">
+              </div>
+            </div>
+          </div>
+
+          <!-- Basemap Selector -->
+          <div class="border-t border-border-crisp pt-gutter-md flex flex-col gap-gutter-sm">
+            <span class="font-label text-label-sm uppercase text-light-on-surface-variant"
+              data-design-text-token="label-sm">Peta Dasar (Basemap)</span>
+            <div class="grid grid-cols-1 gap-1.5">
+              <label
+                class="flex items-center gap-2 p-gutter-sm bg-light-surface border border-cobalt-blue rounded cursor-pointer">
+                <input id="sidebar-basemap-osm" type="radio" name="sidebar-basemap" value="osm" checked
+                  class="text-cobalt-blue focus:ring-cobalt-blue">
+                <span class="font-label text-label-md text-light-on-surface"
+                  data-design-text-token="label-md">OpenStreetMap Standard</span>
+              </label>
+              <label
+                class="flex items-center gap-2 p-gutter-sm bg-light-surface border border-border-crisp rounded cursor-pointer hover:border-light-outline">
+                <input id="sidebar-basemap-sat" type="radio" name="sidebar-basemap" value="sat" class="text-cobalt-blue focus:ring-cobalt-blue">
+                <span class="font-label text-label-md text-light-on-surface" data-design-text-token="label-md">Esri
+                  Satellite Imagery</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2 Content: Legenda Spasial -->
+        <div id="tab-panel-legend" class="hidden flex-1 overflow-y-auto p-gutter-md flex flex-col gap-gutter-md">
+          <div class="bg-light-surface border border-border-crisp rounded-md p-gutter-md flex flex-col gap-gutter-md">
+            <div>
+              <h3 class="font-title text-title-sm text-light-on-surface mb-1.5" data-design-text-token="title-sm">
+                Koridor Jalan</h3>
+              <div class="flex items-center gap-2">
+                <span class="inline-block w-6 h-1 bg-road-vector rounded-sm"></span>
+                <span class="font-body text-body-sm text-light-on-surface-variant"
+                  data-design-text-token="body-sm">Jalan Provinsi Jawa Barat</span>
+              </div>
+            </div>
+
+            <div class="border-t border-border-crisp pt-gutter-sm">
+              <h3 class="font-title text-title-sm text-light-on-surface mb-2" data-design-text-token="title-sm">Kelas
+                &amp; Status Risk (LR)</h3>
+              <ul class="flex flex-col gap-1.5">
+                <li class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-risk-very-low inline-block"></span>
+                    <span class="font-body text-body-sm text-light-on-surface" data-design-text-token="body-sm">Sangat
+                      Rendah</span>
+                  </div>
+                  <span class="font-label text-label-sm text-risk-low" data-design-text-token="label-sm">AMAN</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-risk-low inline-block"></span>
+                    <span class="font-body text-body-sm text-light-on-surface"
+                      data-design-text-token="body-sm">Rendah</span>
+                  </div>
+                  <span class="font-label text-label-sm text-risk-low" data-design-text-token="label-sm">STABIL</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-risk-medium inline-block"></span>
+                    <span class="font-body text-body-sm text-light-on-surface"
+                      data-design-text-token="body-sm">Sedang</span>
+                  </div>
+                  <span class="font-label text-label-sm text-light-tertiary"
+                    data-design-text-token="label-sm">WASPADA</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-risk-high inline-block"></span>
+                    <span class="font-body text-body-sm text-light-on-surface"
+                      data-design-text-token="body-sm">Tinggi</span>
+                  </div>
+                  <span class="font-label text-label-sm text-road-vector" data-design-text-token="label-sm">SIAGA</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-risk-very-high inline-block"></span>
+                    <span class="font-body text-body-sm text-light-on-surface" data-design-text-token="body-sm">Sangat
+                      Tinggi</span>
+                  </div>
+                  <span class="font-label text-label-sm text-light-error" data-design-text-token="label-sm">AWAS</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="border-t border-border-crisp pt-gutter-sm">
+              <h3 class="font-title text-title-sm text-light-on-surface mb-1.5" data-design-text-token="title-sm">Curah
+                Hujan (CHIRPS)</h3>
+              <div class="h-2 rounded-sm chirps-gradient mb-1"></div>
+              <div class="flex justify-between font-body text-body-sm text-light-outline">
+                <span data-design-text-token="body-sm">Rendah</span>
+                <span data-design-text-token="body-sm">Tinggi</span>
+              </div>
+            </div>
+
+            <div class="border-t border-border-crisp pt-gutter-sm">
+              <h3 class="font-title text-title-sm text-light-on-surface mb-1.5" data-design-text-token="title-sm">
+                Kemiringan (DEM Slope)</h3>
+              <div class="h-2 rounded-sm slope-gradient mb-1"></div>
+              <div class="flex justify-between font-body text-body-sm text-light-outline">
+                <span data-design-text-token="body-sm">Landai</span>
+                <span data-design-text-token="body-sm">Curam</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="shrink-0 border-t border-border-crisp bg-light-surface px-gutter-md py-gutter-sm">
+          <nav class="flex items-center justify-center gap-2" aria-label="Informasi legal">
+            <button id="btn-terms" type="button"
+              class="font-label text-label-sm text-light-primary hover:text-cobalt-blue underline-offset-2 hover:underline cursor-pointer">
+              Terms &amp; Conditions
+            </button>
+            <span class="text-border-crisp" aria-hidden="true">|</span>
+            <button id="btn-privacy" type="button"
+              class="font-label text-label-sm text-light-primary hover:text-cobalt-blue underline-offset-2 hover:underline cursor-pointer">
+              Privacy Policy
+            </button>
+          </nav>
+        </footer>
+      </aside>
+
+      <!-- CENTER COLUMN: MAP CANVAS + BOTTOM ANALYTICS DRAWER -->
+      <main class="flex-1 min-w-0 flex flex-col overflow-hidden relative">
+
+        <!-- 3. CENTER FULL-BLEED INTERACTIVE MAP CANVAS -->
+        <div class="flex-1 min-h-0 relative bg-light-surface-container topo-grid-bg overflow-hidden">
+          <!-- Interactive Leaflet Map Container -->
+          <div id="gis-map" class="w-full h-full z-0"></div>
+
+          <!-- Floating ArcGIS-Style Map Toolbar (Top-Left of Map) -->
+          <div
+            class="absolute top-3 left-3 z-10 flex flex-col gap-1 bg-light-surface border border-border-crisp rounded-md shadow-md p-1"
+            role="toolbar" aria-label="Alat Navigasi Peta">
+            <button id="map-zoom-in" type="button" title="Perbesar (Zoom In)" aria-label="Zoom In"
+              class="w-7 h-7 flex items-center justify-center rounded hover:bg-light-surface-container text-light-on-surface cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]">add</span>
+            </button>
+            <button id="map-zoom-out" type="button" title="Perkecil (Zoom Out)" aria-label="Zoom Out"
+              class="w-7 h-7 flex items-center justify-center rounded hover:bg-light-surface-container text-light-on-surface cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]">remove</span>
+            </button>
+            <div class="h-px bg-border-crisp my-0.5"></div>
+            <button id="map-home" type="button" title="Tampilan Awal Jawa Barat (Home)" aria-label="Default Extent"
+              class="w-7 h-7 flex items-center justify-center rounded hover:bg-light-surface-container text-light-on-surface cursor-pointer">
+              <span class="material-symbols-outlined text-[17px]">home</span>
+            </button>
+            <button id="map-identify" type="button" title="Temukan Lokasi Saya" aria-label="Temukan Lokasi Saya"
+              class="w-7 h-7 flex items-center justify-center rounded hover:bg-light-surface-container text-light-on-surface cursor-pointer">
+              <span class="material-symbols-outlined text-[17px]">my_location</span>
+            </button>
+          </div>
+
+          <!-- Floating Map Popup Sample on Selected Node (Top-Right of Map Canvas) -->
+          <article id="floating-node-popup" data-component-id="card-elevated" data-component-type="card"
+            data-component-variant="elevated"
+            class="absolute top-3 right-3 z-10 w-64 bg-light-surface border border-border-crisp rounded-md shadow-md p-gutter-md">
+            <header class="flex items-start justify-between gap-2 pb-1.5 mb-2 border-b border-border-crisp">
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-risk-high inline-block"></span>
+                  <h3 id="popup-node-title" class="font-title text-title-sm text-light-on-surface"
+                    data-design-text-token="title-sm">Node #0 — Koridor Garut</h3>
+                </div>
+                <p id="popup-road-name" class="font-body text-body-sm text-light-on-surface-variant mt-0.5"
+                  data-design-text-token="body-sm">Kadungora (Leles) - Cijapati</p>
+              </div>
+              <button id="close-popup-btn" type="button" aria-label="Tutup Popup"
+                class="text-light-outline hover:text-light-on-surface cursor-pointer">
+                <span class="material-symbols-outlined text-[16px]">close</span>
+              </button>
+            </header>
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between items-center">
+                <span class="font-body text-body-sm text-light-on-surface-variant"
+                  data-design-text-token="body-sm">Koordinat</span>
+                <span id="popup-coords" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
+                  data-design-text-token="mono-sm">-6.8181, 107.8696</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="font-body text-body-sm text-light-on-surface-variant"
+                  data-design-text-token="body-sm">Probabilitas LR</span>
+                <span id="popup-prob" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
+                  data-design-text-token="mono-sm">68.42%</span>
+              </div>
+              <div class="flex justify-between items-center pt-1">
+                <span class="font-body text-body-sm text-light-on-surface-variant"
+                  data-design-text-token="body-sm">Status Risk</span>
+                <span id="popup-badge"
+                  class="inline-flex items-center px-2 py-0.5 rounded-full font-label text-label-sm bg-risk-high text-light-on-surface"
+                  data-design-text-token="label-sm">SIAGA</span>
+              </div>
+              <button id="btn-popup-extract" type="button"
+                class="mt-1.5 w-full h-7 inline-flex items-center justify-center gap-1.5 px-gutter-sm bg-cobalt-blue text-on-cobalt-blue rounded font-label text-label-sm hover:bg-light-primary transition-colors duration-state-change cursor-pointer">
+                <span class="material-symbols-outlined text-[14px]" aria-hidden="true">download</span>
+                <span data-design-text-token="label-sm">Ekstrak Atribut Node Ini</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Bottom-Left Subtle GIS Status Bar -->
+          <div
+            class="absolute bottom-2.5 left-3 z-10 bg-light-surface/95 border border-border-crisp rounded px-2.5 py-1 shadow-sm flex items-center gap-3">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[14px] text-cobalt-blue" aria-hidden="true">explore</span>
+              <span id="status-coords" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
+                data-design-text-token="mono-sm">Lat: -6.8181, Lon: 107.8696</span>
+            </div>
+            <span class="text-border-crisp">|</span>
+            <span class="font-mono text-mono-sm text-light-on-surface-variant"
+              data-design-text-token="mono-sm">EPSG:3857 / WGS84</span>
+            <span class="text-border-crisp">|</span>
+            <div class="flex items-center gap-1.5">
+              <div id="status-scale-bar" class="w-12 h-1.5 border-b-2 border-l-2 border-r-2 border-light-on-surface"></div>
+              <span id="status-scale" class="font-mono text-mono-sm text-light-on-surface-variant tabular-nums"
+                data-design-text-token="mono-sm">10 km</span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- 4. RIGHT COLLAPSIBLE SIDEBAR — SPATIAL INSPECTOR, GEOPROCESSING & ANALYTIC OUTPUT (380px width) -->
+      <aside id="right-sidebar"
+        class="w-[380px] shrink-0 bg-panel-bg border-l border-border-crisp flex flex-col overflow-y-auto p-gutter-md gap-gutter-md z-20">
+
+        <!-- Section A: Inspector & Auto-Fill Feature GIS -->
+        <section
+          class="flex flex-col gap-gutter-sm bg-light-surface border border-border-crisp rounded-md p-gutter-md shrink-0">
+          <header class="flex items-center gap-2 border-b border-border-crisp pb-gutter-xs">
+            <span class="material-symbols-outlined text-[18px] text-cobalt-blue" aria-hidden="true">pin_drop</span>
+            <h2 class="font-title text-title-sm text-light-on-surface" data-design-text-token="title-sm">Inspector &amp;
+              Auto-Fill Feature GIS</h2>
+          </header>
+
+          <!-- Index Titik Peta + Auto-Fill Button -->
+          <div class="flex flex-col gap-1">
+            <label for="input-node-index" class="font-label text-label-md text-light-on-surface-variant"
+              data-design-text-token="label-md">
+              Pilih Index Titik Peta (0-631)
+            </label>
+            <div class="flex items-center gap-2">
+              <input id="input-node-index" type="number" min="0" max="631" value="0"
+                class="w-24 h-8 px-gutter-sm bg-light-surface border border-border-crisp rounded font-mono text-mono-sm text-light-on-surface tabular-nums focus:outline-none focus:border-cobalt-blue focus:ring-1 focus:ring-cobalt-blue">
+              <button id="btn-autofill-index" data-component-id="button-secondary" data-component-type="button"
+                data-component-variant="secondary" type="button"
+                class="flex-1 h-8 inline-flex items-center justify-center px-gutter-sm bg-light-surface text-light-primary border border-light-primary rounded font-label text-label-md hover:bg-light-secondary-container transition-colors duration-state-change cursor-pointer">
+                <span data-design-text-token="label-md">Auto-Fill dari Index Peta</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Two-Column Coordinate Inputs -->
+          <div class="grid grid-cols-2 gap-gutter-sm">
+            <label data-component-id="input-field-text" data-component-type="input-field" data-component-variant="text"
+              class="flex flex-col gap-1">
+              <span class="font-label text-label-md text-light-on-surface-variant truncate"
+                data-design-text-token="label-md">Latitude (Titik Bebas)</span>
+              <input id="input-lat" type="number" step="0.0001" value="-6.8181"
+                class="w-full h-8 px-gutter-sm bg-light-surface border border-border-crisp rounded font-mono text-mono-sm text-light-on-surface tabular-nums focus:outline-none focus:border-cobalt-blue focus:ring-1 focus:ring-cobalt-blue">
+            </label>
+            <label data-component-id="input-field-text" data-component-type="input-field" data-component-variant="text"
+              class="flex flex-col gap-1">
+              <span class="font-label text-label-md text-light-on-surface-variant truncate"
+                data-design-text-token="label-md">Longitude (Titik Bebas)</span>
+              <input id="input-lon" type="number" step="0.0001" value="107.8696"
+                class="w-full h-8 px-gutter-sm bg-light-surface border border-border-crisp rounded font-mono text-mono-sm text-light-on-surface tabular-nums focus:outline-none focus:border-cobalt-blue focus:ring-1 focus:ring-cobalt-blue">
+            </label>
+          </div>
+
+          <!-- Full-width Outline Button -->
+          <button id="btn-extract-gis" data-component-id="button-secondary" data-component-type="button"
+            data-component-variant="secondary" type="button"
+            class="w-full h-8 inline-flex items-center justify-center gap-1.5 px-gutter-md bg-light-surface text-light-primary border border-light-primary rounded font-label text-label-md hover:bg-light-secondary-container transition-colors duration-state-change cursor-pointer">
+            <span class="material-symbols-outlined text-[15px]" aria-hidden="true">my_location</span>
+            <span data-design-text-token="label-md">Ekstrak Atribut GIS dari Koordinat Ini</span>
+          </button>
+
+          <!-- Compact Status Banner -->
+          <div id="gis-status-banner"
+            class="p-gutter-sm rounded bg-light-secondary-container border border-light-outline-variant flex items-start gap-2">
+            <span class="material-symbols-outlined text-[16px] text-light-primary shrink-0 mt-0.5"
+              aria-hidden="true">check_circle</span>
+            <p class="flex-1 font-body text-body-sm text-light-on-secondary-container" data-design-text-token="body-sm">
+              Status Lokasi Spasial GIS: Siap mengekstrak fitur spasial.
+            </p>
+            <button id="btn-idw-info" type="button" title="Cara kerja Spatial IDW 5-Pixel Interpolation Engine"
+              aria-label="Cara kerja Spatial IDW 5-Pixel Interpolation Engine"
+              class="hidden w-6 h-6 shrink-0 inline-flex items-center justify-center rounded text-cobalt-blue hover:bg-light-surface transition-colors duration-state-change cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]" aria-hidden="true">help</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Section B: Parameter Lereng & Hidrologi (2x2 Grid) -->
+        <section
+          class="flex flex-col gap-gutter-sm bg-light-surface border border-border-crisp rounded-md p-gutter-md shrink-0">
+          <header class="flex items-center gap-2 border-b border-border-crisp pb-gutter-xs">
+            <span class="material-symbols-outlined text-[18px] text-cobalt-blue" aria-hidden="true">terrain</span>
+            <h2 class="font-title text-title-sm text-light-on-surface" data-design-text-token="title-sm">Parameter
+              Lereng &amp; Hidrologi</h2>
+          </header>
+
+          <div class="grid grid-cols-2 gap-gutter-sm">
+            <label data-component-id="input-field-text" data-component-type="input-field" data-component-variant="text"
+              class="flex flex-col gap-1">
+              <span class="font-label text-label-sm text-light-on-surface-variant truncate"
+                data-design-text-token="label-sm">Elevation (m)</span>
+              <input id="input-elevation" type="number" step="0.01" value="652.25"
+                class="w-full h-8 px-gutter-sm bg-light-surface border border-border-crisp rounded font-mono text-mono-sm text-light-on-surface tabular-nums focus:outline-none focus:border-cobalt-blue focus:ring-1 focus:ring-cobalt-blue">
+            </label>
+            <label data-component-id="input-field-text" data-component-type="input-field" data-component-variant="text"
+              class="flex flex-col gap-1">
+              <span class="font-label text-label-sm text-light-on-surface-variant truncate"
+                data-design-text-token="label-sm">Slope (°)</span>
+              <input id="input-slope" type="number" step="0.01" value="7.99"
+                class="w-full h-8 px-gutter-sm bg-light-surface border border-border-crisp rounded font-mono text-mono-sm text-light-on-surface tabular-nums focus:outline-none focus:border-cobalt-blue focus:ring-1 focus:ring-cobalt-blue">
+            </label>
+            <label data-component-id="input-field-text" data-component-type="input-field" data-component-variant="text"
+              class="flex flex-col gap-1">
+              <span class="font-label text-label-sm text-light-on-surface-variant truncate"
+                data-design-text-token="label-sm">Rainfall (mm/thn)</span>
+              <input id="input-rainfall" type="number" step="0.01" value="2914.77"
+                class="w-full h-8 px-gutter-sm bg-light-surface border border-border-crisp rounded font-mono text-mono-sm text-light-on-surface tabular-nums focus:outline-none focus:border-cobalt-blue focus:ring-1 focus:ring-cobalt-blue">
+            </label>
+            <label data-component-id="input-field-text" data-component-type="input-field" data-component-variant="text"
+              class="flex flex-col gap-1">
+              <span class="font-label text-label-sm text-light-on-surface-variant truncate"
+                data-design-text-token="label-sm">Aspect (° Azimuth)</span>
+              <input id="input-aspect" type="number" step="0.01" value="117.48"
+                class="w-full h-8 px-gutter-sm bg-light-surface border border-border-crisp rounded font-mono text-mono-sm text-light-on-surface tabular-nums focus:outline-none focus:border-cobalt-blue focus:ring-1 focus:ring-cobalt-blue">
+            </label>
+          </div>
+        </section>
+
+        <!-- Primary CTA Button -->
+        <button id="btn-run-prediction" data-component-id="button-with-icon" data-component-type="button"
+          data-component-variant="with-icon" type="button"
+          class="w-full shrink-0 inline-flex items-center justify-center gap-2 px-gutter-lg py-2.5 bg-cobalt-blue text-on-cobalt-blue rounded font-label text-label-lg font-semibold hover:bg-light-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-blue transition-colors duration-state-change cursor-pointer shadow-sm">
+          <span class="material-symbols-outlined text-[18px]" aria-hidden="true">play_arrow</span>
+          <span data-design-text-token="label-lg">Jalankan Prediksi Komparasi Multi-Model</span>
+        </button>
+
+        <!-- Section C: Analytic Output (Moved to Right Sidebar) -->
+        <!-- Card 1: Multi-Model ML Comparison Table -->
+        <article id="card-ml-table" data-component-id="card-ml-table" data-component-type="card" data-component-variant="outlined"
+          class="hidden bg-light-surface border border-border-crisp rounded-md flex flex-col shrink-0 overflow-hidden">
+          <header
+            class="px-gutter-sm py-1.5 border-b border-border-crisp bg-light-surface-container flex items-center justify-between">
+            <h2 class="font-title text-title-sm text-light-on-surface" data-design-text-token="title-sm">Hasil Prediksi</h2>
+            <button id="btn-model-info" type="button" title="Cara kerja model machine learning"
+              aria-label="Cara kerja model machine learning"
+              class="w-6 h-6 inline-flex items-center justify-center rounded text-cobalt-blue hover:bg-light-secondary-container transition-colors duration-state-change cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]" aria-hidden="true">help</span>
+            </button>
+          </header>
+          <div data-component-id="table-compact" data-component-type="table" data-component-variant="compact">
+            <table class="w-full text-left border-collapse">
+              <thead class="bg-light-surface-container-low border-b border-border-crisp">
+                <tr>
+                  <th scope="col" class="px-2 py-1 font-label text-label-sm text-light-on-surface-variant"><span
+                      data-design-text-token="label-sm">Model</span></th>
+                  <th scope="col" class="px-2 py-1 font-label text-label-sm text-light-on-surface-variant text-right">
+                    <span data-design-text-token="label-sm">Prob%</span></th>
+                  <th scope="col" class="px-2 py-1 font-label text-label-sm text-light-on-surface-variant"><span
+                      data-design-text-token="label-sm">Kelas</span></th>
+                  <th scope="col" class="px-2 py-1 font-label text-label-sm text-light-on-surface-variant"><span
+                      data-design-text-token="label-sm">Status</span></th>
+                </tr>
+              </thead>
+              <tbody id="ml-comparison-tbody" class="divide-y divide-border-crisp"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- Card 2: Decision Support System (DSS) -->
+        <article id="card-dss" data-component-id="card-dss" data-component-type="card" data-component-variant="outlined"
+          class="hidden bg-light-surface border border-border-crisp rounded-md flex flex-col shrink-0 overflow-hidden">
+          <header
+            class="px-gutter-sm py-1.5 border-b border-border-crisp bg-light-surface-container flex items-center justify-between gap-1">
+            <h2 class="font-title text-title-sm text-light-on-surface" data-design-text-token="title-sm">Decision
+              Support System (DSS)</h2>
+            <span id="dss-alert-badge"
+              class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-risk-high text-light-on-surface font-label text-label-sm shrink-0"
+              data-design-text-token="label-sm">
+              <span class="material-symbols-outlined text-[12px]" aria-hidden="true">warning</span>
+              <span>SIAGA</span>
+            </span>
+          </header>
+          <div class="p-gutter-sm flex flex-col gap-1.5">
+            <h3 class="font-title text-title-sm text-light-on-surface" data-design-text-token="title-sm">
+              Rekomendasi Pemeliharaan Lereng / Retaining Wall (LR Engine)
+            </h3>
+            <p id="dss-recommendation-text"
+              class="font-body text-body-sm text-light-on-surface-variant text-pretty leading-relaxed"
+              data-design-text-token="body-sm">
+              Curah hujan tinggi (2.914,77 mm/thn) pada elevasi 652,25 m meningkatkan tekanan pori tanah. Lakukan
+              inspeksi retaining wall dan normalisasi drainase tepi jalan.
+            </p>
+          </div>
+        </article>
+
+        <!-- Card 3: Grafik Parameter Lereng -->
+        <article data-component-id="card-param-chart" data-component-type="card" data-component-variant="outlined"
+          class="bg-light-surface border border-border-crisp rounded-md flex flex-col shrink-0 overflow-hidden">
+          <header class="px-gutter-sm py-1.5 border-b border-border-crisp bg-light-surface-container">
+            <h2 class="font-title text-title-sm text-light-on-surface" data-design-text-token="title-sm">Grafik
+              Parameter Lereng (Skala Independen)</h2>
+          </header>
+          <div class="p-gutter-sm flex flex-col gap-2">
+            <!-- Elevation -->
+            <div class="flex flex-col gap-0.5">
+              <div class="flex justify-between items-center">
+                <span class="font-body text-body-sm text-light-on-surface-variant"
+                  data-design-text-token="body-sm">Elevation</span>
+                <span id="chart-val-elev" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
+                  data-design-text-token="mono-sm">652.25 m</span>
+              </div>
+              <div class="w-full h-1.5 bg-light-surface-container rounded-full overflow-hidden">
+                <div id="chart-bar-elev" class="h-full bg-cobalt-blue rounded-full" style="width: 43%;"></div>
+              </div>
+            </div>
+            <!-- Slope -->
+            <div class="flex flex-col gap-0.5">
+              <div class="flex justify-between items-center">
+                <span class="font-body text-body-sm text-light-on-surface-variant"
+                  data-design-text-token="body-sm">Slope</span>
+                <span id="chart-val-slope" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
+                  data-design-text-token="mono-sm">7.99°</span>
+              </div>
+              <div class="w-full h-1.5 bg-light-surface-container rounded-full overflow-hidden">
+                <div id="chart-bar-slope" class="h-full bg-risk-medium rounded-full" style="width: 22%;"></div>
+              </div>
+            </div>
+            <!-- Rainfall -->
+            <div class="flex flex-col gap-0.5">
+              <div class="flex justify-between items-center">
+                <span class="font-body text-body-sm text-light-on-surface-variant"
+                  data-design-text-token="body-sm">Rainfall</span>
+                <span id="chart-val-rain" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
+                  data-design-text-token="mono-sm">2914.77 mm</span>
+              </div>
+              <div class="w-full h-1.5 bg-light-surface-container rounded-full overflow-hidden">
+                <div id="chart-bar-rain" class="h-full bg-risk-high rounded-full" style="width: 78%;"></div>
+              </div>
+            </div>
+            <!-- Aspect -->
+            <div class="flex flex-col gap-0.5">
+              <div class="flex justify-between items-center">
+                <span class="font-body text-body-sm text-light-on-surface-variant"
+                  data-design-text-token="body-sm">Aspect</span>
+                <span id="chart-val-aspect" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
+                  data-design-text-token="mono-sm">117.48°</span>
+              </div>
+              <div class="w-full h-1.5 bg-light-surface-container rounded-full overflow-hidden">
+                <div id="chart-bar-aspect" class="h-full bg-light-secondary rounded-full" style="width: 33%;"></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </aside>
+    </div>
+
+    <!-- METODOLOGI ENGINE MODAL -->
+    <div id="methodology-modal"
+      class="hidden fixed inset-0 z-50 bg-light-on-surface/50 flex items-center justify-center p-gutter-lg"
+      role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div
+        class="bg-light-surface border border-border-crisp rounded-md shadow-xl max-w-2xl w-full max-h-[calc(100vh-48px)] overflow-y-auto p-gutter-lg flex flex-col gap-gutter-md">
+        <header class="flex items-center justify-between border-b border-border-crisp pb-gutter-sm">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px] text-cobalt-blue" aria-hidden="true">science</span>
+            <h2 id="modal-title" class="font-headline text-headline-md text-light-on-surface"
+              data-design-text-token="headline-md">Metodologi Engine WebGIS</h2>
+          </div>
+          <button id="btn-close-modal" type="button" aria-label="Tutup Modal"
+            class="text-light-outline hover:text-light-on-surface cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </header>
+        <div class="flex flex-col gap-gutter-md">
+          <div class="p-gutter-sm bg-light-surface-container-low border border-border-crisp rounded">
+            <h3 class="font-title text-title-sm text-light-primary mb-1">Cara Kerja Model Prediksi</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter-sm mt-2">
+              <article>
+                <h4 class="font-label text-label-md font-bold text-light-primary">Logistic Regression</h4>
+                <p class="font-body text-body-sm text-light-on-surface-variant">
+                  Menghitung probabilitas suatu sampel termasuk kelas tertentu berdasarkan kombinasi linear fitur menggunakan fungsi logistik (sigmoid). Klasifikasi ditentukan berdasarkan ambang probabilitas yang ditetapkan.
+                </p>
+              </article>
+              <article>
+                <h4 class="font-label text-label-md font-bold text-light-primary">Support Vector Machine (SVM)</h4>
+                <p class="font-body text-body-sm text-light-on-surface-variant">
+                  Mencari hyperplane terbaik yang memisahkan kelas positif dan negatif dengan margin terbesar. Kernel dapat digunakan untuk menangani pola hubungan nonlinier antarfitur.
+                </p>
+              </article>
+              <article>
+                <h4 class="font-label text-label-md font-bold text-light-primary">Random Forest</h4>
+                <p class="font-body text-body-sm text-light-on-surface-variant">
+                  Menggabungkan prediksi dari banyak Decision Tree yang dibangun menggunakan sampel data dan subset fitur secara acak. Hasil klasifikasi ditentukan melalui voting mayoritas dari seluruh pohon.
+                </p>
+              </article>
+              <article>
+                <h4 class="font-label text-label-md font-bold text-light-primary">XGBoost</h4>
+                <p class="font-body text-body-sm text-light-on-surface-variant">
+                  Membangun model secara bertahap menggunakan kumpulan Decision Tree, dengan setiap pohon baru berusaha memperbaiki kesalahan prediksi model sebelumnya. Proses optimasinya menggunakan gradient boosting dengan regularisasi untuk mengurangi risiko overfitting.
+                </p>
+              </article>
+          </div>
+          </div>
+          <div id="methodology-idw" class="p-gutter-sm bg-light-surface-container-low border border-border-crisp rounded scroll-mt-4">
+            <h3 class="font-title text-title-sm text-light-on-surface mb-1" data-design-text-token="title-sm">Spatial
+              IDW 5-Pixel Interpolation Engine</h3>
+            <p class="font-body text-body-sm text-light-on-surface-variant" data-design-text-token="body-sm">
+              Koordinat di luar 632 titik sampel koridor jalan provinsi diekstraksi secara dinamis menggunakan
+              interpolasi Inverse Distance Weighting (IDW) berbasis 5 piksel DEM SRTM &amp; CHIRPS terdekat.
+            </p>
+          </div>
+        </div>
+        <footer class="flex justify-end pt-gutter-xs">
+          <button id="btn-confirm-modal" type="button"
+            class="px-gutter-lg py-1.5 bg-cobalt-blue text-on-cobalt-blue rounded font-label text-label-md hover:bg-light-primary cursor-pointer">
+            <span data-design-text-token="label-md">Mengerti</span>
+          </button>
+        </footer>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (async function () {
+      // 1. Ambil 632 Node & GeoJSON Jalan Provinsi langsung dari FastAPI
+      const res = await fetch('/api/layers');
+      const { nodes: sampleNodes, roads: roadsGeoJson } = await res.json();
+
+      const map = L.map('gis-map', {
+        center: [-6.9147, 107.6098],
+        zoom: 9,
+        zoomControl: false,
+        preferCanvas: true,
+        zoomAnimation: true,
+        fadeAnimation: false,
+        markerZoomAnimation: false
+      });
+      const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+      const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18 });
+      window.gisMap = map;
+      window.gisBaseLayers = { osm: osmLayer, sat: satLayer };
+      window.currentBasemap = 'osm';
+      const statusCoords = document.getElementById('status-coords');
+      const statusScale = document.getElementById('status-scale');
+      const statusScaleBar = document.getElementById('status-scale-bar');
+
+      function formatMapDistance(meters) {
+        if (meters >= 1000) {
+          const kilometers = meters / 1000;
+          return `${kilometers >= 10 ? kilometers.toFixed(0) : kilometers.toFixed(1)} km`;
+        }
+        if (meters >= 100) return `${Math.round(meters / 10) * 10} m`;
+        return `${Math.max(1, Math.round(meters))} m`;
+      }
+
+      function updateMapStatus(latlng) {
+        const center = latlng || map.getCenter();
+        statusCoords.textContent = `Lat: ${center.lat.toFixed(5)}, Lon: ${center.lng.toFixed(5)}`;
+
+        const mapSize = map.getSize();
+        const middleY = mapSize.y / 2;
+        const left = map.containerPointToLatLng(L.point(0, middleY));
+        const right = map.containerPointToLatLng(L.point(48, middleY));
+        const distance48px = map.distance(left, right);
+
+        statusScale.textContent = formatMapDistance(distance48px);
+        statusScaleBar.style.width = '48px';
+      }
+
+      let statusFrame = null;
+      map.on('mousemove', event => {
+        if (statusFrame !== null) return;
+        statusFrame = requestAnimationFrame(() => {
+          updateMapStatus(event.latlng);
+          statusFrame = null;
+        });
+      });
+      map.on('moveend zoomend resize', () => updateMapStatus());
+      updateMapStatus();
+
+      document.getElementById('map-zoom-in').addEventListener('click', () => {
+        map.zoomIn();
+      });
+      document.getElementById('map-zoom-out').addEventListener('click', () => {
+        map.zoomOut();
+      });
+      document.getElementById('map-home').addEventListener('click', () => {
+        map.setView([-6.9147, 107.6098], 9);
+      });
+
+      let userLocationMarker = null;
+      document.getElementById('map-identify').addEventListener('click', () => {
+        if (!window.isSecureContext) {
+          setGISStatus('Akses lokasi memerlukan HTTPS atau localhost');
+          return;
+        }
+        if (!navigator.geolocation) {
+          setGISStatus('Browser tidak mendukung akses lokasi');
+          return;
+        }
+        setGISStatus('Meminta izin akses lokasi...');
+        navigator.geolocation.getCurrentPosition(position => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          if (userLocationMarker) map.removeLayer(userLocationMarker);
+          userLocationMarker = L.circleMarker([lat, lon], {
+            radius: 7,
+            color: '#FFFFFF',
+            weight: 2,
+            fillColor: '#0079C1',
+            fillOpacity: 1
+          }).bindTooltip('Lokasi Anda Saat Ini', { permanent: false }).addTo(map);
+          map.setView([lat, lon], 13);
+          document.getElementById('input-lat').value = lat.toFixed(5);
+          document.getElementById('input-lon').value = lon.toFixed(5);
+          setGISStatus(`Lokasi pengguna ditemukan: ${lat.toFixed(5)}, ${lon.toFixed(5)}`);
+        }, error => {
+          const messages = {
+            1: 'Izin lokasi ditolak pengguna',
+            2: 'Lokasi pengguna tidak tersedia',
+            3: 'Permintaan lokasi habis waktu'
+          };
+          setGISStatus(messages[error.code] || 'Gagal mendapatkan lokasi pengguna');
+        }, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 30000
+        });
+      });
+      window.switchBasemap = function (name) {
+        const osmButton = document.getElementById('btn-basemap-osm');
+        const satButton = document.getElementById('btn-basemap-sat');
+        window.currentBasemap = name;
+        if (name === 'sat') {
+          map.removeLayer(osmLayer);
+          satLayer.addTo(map);
+          satButton.className = 'px-2 h-full rounded-sm bg-cobalt-blue text-on-cobalt-blue font-label text-label-sm cursor-pointer transition-colors duration-state-change';
+          osmButton.className = 'px-2 h-full rounded-sm text-light-on-surface font-label text-label-sm hover:bg-light-surface cursor-pointer transition-colors duration-state-change';
+          document.getElementById('header-search-input').placeholder = 'Cari lokasi dengan Esri...';
+          document.getElementById('sidebar-basemap-sat').checked = true;
+        } else {
+          map.removeLayer(satLayer);
+          osmLayer.addTo(map);
+          osmButton.className = 'px-2 h-full rounded-sm bg-cobalt-blue text-on-cobalt-blue font-label text-label-sm cursor-pointer transition-colors duration-state-change';
+          satButton.className = 'px-2 h-full rounded-sm text-light-on-surface font-label text-label-sm hover:bg-light-surface cursor-pointer transition-colors duration-state-change';
+          document.getElementById('header-search-input').placeholder = 'Cari lokasi dengan OSM...';
+          document.getElementById('sidebar-basemap-osm').checked = true;
+        }
+        map.invalidateSize();
+      };
+
+      // Render Vektor Jalan Provinsi
+      const roadGroup = L.geoJSON(roadsGeoJson, {
+        style: { color: '#D35400', weight: 3, opacity: 0.9 },
+        onEachFeature: (f, layer) => {
+          const nama = f.properties.nm_ruas || f.properties.nama_ruas || 'Jalan Provinsi';
+          layer.bindTooltip(nama, { sticky: true });
+        }
+      }).addTo(map);
+
+      // Render Heatmap CHIRPS & DEM Slope (Normalisasi 0-1)
+      const maxRain = Math.max(...sampleNodes.map(n => n.rain), 1);
+      const minRain = Math.min(...sampleNodes.map(n => n.rain));
+      function heatRadiusForZoom() {
+        const zoomDifference = map.getZoom() - 9;
+        return Math.max(30, Math.min(180, Math.round(30 * Math.pow(1.75, zoomDifference))));
+      }
+
+      const chirpsHeat = typeof L.heatLayer === 'function'
+        ? L.heatLayer(
+          sampleNodes.map(n => [n.lat, n.lon, (n.rain - minRain) / Math.max(maxRain - minRain, 1)]),
+          { radius: heatRadiusForZoom(), blur: 22, minOpacity: 0.45, gradient: { 0.3: 'blue', 0.65: 'lime', 1: 'red' } }
+        )
+        : L.layerGroup();
+
+      const maxSlope = Math.max(...sampleNodes.map(n => n.slope), 1);
+      const slopeHeat = typeof L.heatLayer === 'function'
+        ? L.heatLayer(
+          sampleNodes.map(n => [n.lat, n.lon, n.slope / maxSlope]),
+          { radius: heatRadiusForZoom(), blur: 20, minOpacity: 0.45, gradient: { 0.25: 'green', 0.55: 'yellow', 1: 'darkred' } }
+        )
+        : L.layerGroup();
+
+      let heatZoomFrame = null;
+      map.on('zoomend moveend', () => {
+        if (heatZoomFrame !== null) return;
+        heatZoomFrame = requestAnimationFrame(() => {
+          const radius = heatRadiusForZoom();
+          if (typeof chirpsHeat.setOptions === 'function') {
+            chirpsHeat.setOptions({ radius, blur: Math.round(radius * 0.73) });
+          }
+          if (typeof slopeHeat.setOptions === 'function') {
+            slopeHeat.setOptions({ radius, blur: Math.round(radius * 0.68) });
+          }
+          heatZoomFrame = null;
+        });
+      });
+
+      // Render 632 Titik Prediksi LR
+      const nodeGroup = L.featureGroup();
+      let markerBatchIndex = 0;
+      function renderNodeBatch() {
+        const batchEnd = Math.min(markerBatchIndex + 64, sampleNodes.length);
+        for (; markerBatchIndex < batchEnd; markerBatchIndex += 1) {
+          const n = sampleNodes[markerBatchIndex];
+          L.circleMarker([n.lat, n.lon], {
+            radius: 4.5,
+            color: n.color,
+            weight: 1.5,
+            fillColor: n.color,
+            fillOpacity: 0.85
+          }).on('click', (e) => {
+            L.DomEvent.stopPropagation(e);
+            document.getElementById('input-node-index').value = n.idx;
+            loadByIndex(n.idx);
+          }).addTo(nodeGroup);
+        }
+        if (markerBatchIndex < sampleNodes.length) {
+          requestAnimationFrame(renderNodeBatch);
+        }
+      }
+      nodeGroup.addTo(map);
+      requestAnimationFrame(renderNodeBatch);
+      if (nodeGroup.getBounds().isValid()) {
+        map.fitBounds(nodeGroup.getBounds(), { padding: [20, 20], maxZoom: 12 });
+      }
+
+      // Hubungkan Tombol UI ke API FastAPI
+      function updatePopup(node) {
+        if (!node) return;
+        document.getElementById('popup-node-title').textContent = `Node #${node.idx} — ${node.cls}`;
+        document.getElementById('popup-road-name').textContent = node.road;
+        document.getElementById('popup-coords').textContent = `${node.lat.toFixed(5)}, ${node.lon.toFixed(5)}`;
+        document.getElementById('popup-prob').textContent = `${node.lrProb.toFixed(2)}%`;
+        document.getElementById('status-coords').textContent = `Lat: ${node.lat.toFixed(5)}, Lon: ${node.lon.toFixed(5)}`;
+
+        const badge = document.getElementById('popup-badge');
+        badge.textContent = node.status;
+        badge.style.backgroundColor = node.color;
+        document.getElementById('floating-node-popup').classList.remove('hidden');
+      }
+
+      function updateParameterChart(d) {
+        document.getElementById('chart-val-elev').textContent = `${d.elevation.toFixed(2)} m`;
+        document.getElementById('chart-val-slope').textContent = `${d.slope.toFixed(2)}°`;
+        document.getElementById('chart-val-rain').textContent = `${d.rainfall.toFixed(2)} mm`;
+        document.getElementById('chart-val-aspect').textContent = `${d.aspect.toFixed(2)}°`;
+      }
+
+      function setGISStatus(message) {
+        document.getElementById('gis-status-banner').querySelector('p').textContent = message;
+        const idwButton = document.getElementById('btn-idw-info');
+        idwButton.classList.toggle('hidden', !message.includes('Ter-interpolasi IDW'));
+      }
+
+      async function loadByIndex(idx) {
+        const d = await (await fetch(`/api/node/${idx}`)).json();
+        document.getElementById('input-lat').value = d.lat;
+        document.getElementById('input-lon').value = d.lon;
+        document.getElementById('input-elevation').value = d.elevation;
+        document.getElementById('input-slope').value = d.slope;
+        document.getElementById('input-rainfall').value = d.rainfall;
+        document.getElementById('input-aspect').value = d.aspect;
+        setGISStatus(d.status);
+        updateParameterChart(d);
+        updatePopup(sampleNodes.find(n => n.idx === idx));
+        map.setView([d.lat, d.lon], 12);
+      }
+
+      async function runPrediction() {
+        const button = document.getElementById('btn-run-prediction');
+        button.disabled = true;
+        const readFiniteNumber = (id, fallback = 0) => {
+          const value = Number(document.getElementById(id).value);
+          return Number.isFinite(value) ? value : fallback;
+        };
+        const payload = {
+          elevation: readFiniteNumber('input-elevation'),
+          slope: readFiniteNumber('input-slope'),
+          rainfall: readFiniteNumber('input-rainfall'),
+          aspect: readFiniteNumber('input-aspect')
+        };
+        try {
+          const res = await fetch('/api/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error(`Prediksi gagal (${res.status})`);
+          const data = await res.json();
+
+          const comparisonBody = document.getElementById('ml-comparison-tbody');
+          comparisonBody.replaceChildren();
+          data.models.forEach(model => {
+            const row = document.createElement('tr');
+            const isLogisticRegression = model.model === 'Logistic Regression';
+            if (isLogisticRegression) {
+              row.className = 'border-l-4 border-cobalt-blue';
+            }
+            ['model', 'prob_pct', 'kelas', 'status'].forEach(key => {
+              const cell = document.createElement('td');
+              cell.className = 'px-2 py-1.5 font-body text-body-sm';
+              if (isLogisticRegression) {
+                cell.classList.add('bg-light-secondary-container', 'text-light-on-secondary-container');
+              }
+              if (isLogisticRegression && key !== 'model') {
+                cell.classList.add('font-mono', 'font-bold', 'text-light-primary');
+              }
+              if (isLogisticRegression && key === 'model') {
+                cell.classList.add('font-label', 'font-bold', 'text-cobalt-blue');
+              }
+              cell.textContent = key === 'prob_pct'
+                ? `${Number(model[key]).toFixed(2)}%`
+                : String(model[key] ?? '');
+              row.appendChild(cell);
+            });
+            comparisonBody.appendChild(row);
+          });
+          document.getElementById('dss-recommendation-text').textContent = data.dss;
+          document.getElementById('card-ml-table').classList.remove('hidden');
+          document.getElementById('card-dss').classList.remove('hidden');
+          const xgb = data.models.find(m => m.model === 'XGBoost');
+          if (xgb) {
+            const alertBadge = document.getElementById('dss-alert-badge');
+            alertBadge.querySelector('span:last-child').textContent = xgb.status;
+          }
+        } catch (error) {
+          setGISStatus(error.message);
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      document.getElementById('btn-autofill-index').addEventListener('click', () => {
+        const rawIndex = Number(document.getElementById('input-node-index').value);
+        const safeIndex = Number.isInteger(rawIndex)
+          ? Math.min(sampleNodes.length - 1, Math.max(0, rawIndex))
+          : 0;
+        document.getElementById('input-node-index').value = safeIndex;
+        loadByIndex(safeIndex);
+      });
+
+      document.getElementById('btn-extract-gis').addEventListener('click', async () => {
+        const lat = Number(document.getElementById('input-lat').value);
+        const lon = Number(document.getElementById('input-lon').value);
+        if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lon) || lon < -180 || lon > 180) {
+          setGISStatus('Koordinat tidak valid');
+          return;
+        }
+        const d = await (await fetch('/api/idw', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lon })
+        })).json();
+        document.getElementById('input-elevation').value = d.elevation;
+        document.getElementById('input-slope').value = d.slope;
+        document.getElementById('input-rainfall').value = d.rainfall;
+        document.getElementById('input-aspect').value = d.aspect;
+        setGISStatus(d.status);
+        updateParameterChart(d);
+      });
+
+      document.getElementById('btn-run-prediction').addEventListener('click', runPrediction);
+      document.getElementById('close-popup-btn').addEventListener('click', () => {
+        document.getElementById('floating-node-popup').classList.add('hidden');
+      });
+      document.getElementById('btn-popup-extract').addEventListener('click', () => {
+        const idx = parseInt(document.getElementById('input-node-index').value, 10);
+        loadByIndex(idx);
+      });
+      let chirpsOpacity = 0.60;
+      let slopeOpacity = 0.55;
+      document.getElementById('layer-op-chirps').addEventListener('input', e => {
+        chirpsOpacity = Number(e.target.value) / 100;
+      });
+      document.getElementById('layer-op-slope').addEventListener('input', e => {
+        slopeOpacity = Number(e.target.value) / 100;
+      });
+      document.getElementById('layer-chk-chirps').addEventListener('change', e => {
+        if (e.target.checked) {
+          chirpsHeat.addTo(map);
+          if (chirpsHeat._canvas) chirpsHeat._canvas.style.opacity = chirpsOpacity;
+        } else {
+          map.removeLayer(chirpsHeat);
+        }
+      });
+      document.getElementById('layer-chk-slope').addEventListener('change', e => {
+        if (e.target.checked) {
+          slopeHeat.addTo(map);
+          if (slopeHeat._canvas) slopeHeat._canvas.style.opacity = slopeOpacity;
+        } else {
+          map.removeLayer(slopeHeat);
+        }
+      });
+      document.getElementById('layer-chk-nodes').addEventListener('change', e => e.target.checked ? nodeGroup.addTo(map) : map.removeLayer(nodeGroup));
+      document.getElementById('layer-chk-roads').addEventListener('change', e => e.target.checked ? roadGroup.addTo(map) : map.removeLayer(roadGroup));
+
+      // Basemap switcher
+      document.getElementById('btn-basemap-osm').addEventListener('click', () => {
+        map.removeLayer(satLayer);
+        osmLayer.addTo(map);
+        document.getElementById('btn-basemap-osm').className = 'px-2 h-full rounded-sm bg-cobalt-blue text-on-cobalt-blue font-label text-label-sm cursor-pointer transition-colors duration-state-change';
+        document.getElementById('btn-basemap-sat').className = 'px-2 h-full rounded-sm text-light-on-surface font-label text-label-sm hover:bg-light-surface cursor-pointer transition-colors duration-state-change';
+        window.currentBasemap = 'osm';
+        document.getElementById('sidebar-basemap-osm').checked = true;
+        document.getElementById('header-search-input').placeholder = 'Cari lokasi dengan OSM...';
+      });
+      document.getElementById('btn-basemap-sat').addEventListener('click', () => {
+        map.removeLayer(osmLayer);
+        satLayer.addTo(map);
+        document.getElementById('btn-basemap-sat').className = 'px-2 h-full rounded-sm bg-cobalt-blue text-on-cobalt-blue font-label text-label-sm cursor-pointer transition-colors duration-state-change';
+        document.getElementById('btn-basemap-osm').className = 'px-2 h-full rounded-sm text-light-on-surface font-label text-label-sm hover:bg-light-surface cursor-pointer transition-colors duration-state-change';
+        window.currentBasemap = 'sat';
+        document.getElementById('sidebar-basemap-sat').checked = true;
+        document.getElementById('header-search-input').placeholder = 'Cari lokasi dengan Esri...';
+      });
+      document.getElementById('sidebar-basemap-osm').addEventListener('change', e => {
+        if (e.target.checked) window.switchBasemap('osm');
+      });
+      document.getElementById('sidebar-basemap-sat').addEventListener('change', e => {
+        if (e.target.checked) window.switchBasemap('sat');
+      });
+
+      // Sidebar and tab toggles
+      document.getElementById('btn-toggle-left').addEventListener('click', () => {
+        document.getElementById('left-sidebar').classList.toggle('hidden');
+        setTimeout(() => map.invalidateSize(), 50);
+      });
+      document.getElementById('btn-toggle-right').addEventListener('click', () => {
+        document.getElementById('right-sidebar').classList.toggle('hidden');
+        setTimeout(() => map.invalidateSize(), 50);
+      });
+      document.getElementById('tab-btn-layers').addEventListener('click', () => {
+        document.getElementById('tab-panel-layers').classList.remove('hidden');
+        document.getElementById('tab-panel-legend').classList.add('hidden');
+      });
+      document.getElementById('tab-btn-legend').addEventListener('click', () => {
+        document.getElementById('tab-panel-layers').classList.add('hidden');
+        document.getElementById('tab-panel-legend').classList.remove('hidden');
+      });
+
+      // Metodologi modal
+      const methodologyModal = document.getElementById('methodology-modal');
+      const closeMethodology = () => methodologyModal.classList.add('hidden');
+      document.getElementById('btn-methodology').addEventListener('click', () => methodologyModal.classList.remove('hidden'));
+      document.getElementById('btn-close-modal').addEventListener('click', closeMethodology);
+      document.getElementById('btn-confirm-modal').addEventListener('click', closeMethodology);
+      methodologyModal.addEventListener('click', e => {
+        if (e.target === methodologyModal) closeMethodology();
+      });
+      const legalModal = document.getElementById('legal-modal');
+      const legalModalTitle = document.getElementById('legal-modal-title');
+      const legalModalContent = document.getElementById('legal-modal-content');
+      const closeLegalModal = () => legalModal.classList.add('hidden');
+
+      async function openLegalDocument(type) {
+        try {
+          const response = await fetch(type === 'terms' ? '/docs/terms' : '/docs/privacy');
+          if (!response.ok) throw new Error('Dokumen tidak dapat dimuat');
+          const text = await response.text();
+          legalModalTitle.textContent = type === 'terms' ? 'Terms & Conditions' : 'Privacy Policy';
+          legalModalContent.textContent = text.slice(0, 100000);
+          legalModalContent.scrollTop = 0;
+          legalModal.classList.remove('hidden');
+        } catch (error) {
+          setGISStatus(error.message);
+        }
+      }
+
+      document.getElementById('btn-terms').addEventListener('click', () => openLegalDocument('terms'));
+      document.getElementById('btn-privacy').addEventListener('click', () => openLegalDocument('privacy'));
+      document.getElementById('btn-close-legal-modal').addEventListener('click', closeLegalModal);
+      document.getElementById('btn-confirm-legal-modal').addEventListener('click', closeLegalModal);
+      legalModal.addEventListener('click', e => {
+        if (e.target === legalModal) closeLegalModal();
+      });
+      document.getElementById('btn-model-info').addEventListener('click', () => {
+        methodologyModal.classList.remove('hidden');
+      });
+
+      const idwInfoButton = document.getElementById('btn-idw-info');
+      idwInfoButton.addEventListener('click', () => {
+        methodologyModal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          document.getElementById('methodology-idw').scrollIntoView({ block: 'start', behavior: 'smooth' });
+        });
+      });
+
+      const developerInfoPanel = document.getElementById('developer-info-panel');
+      const developerInfoButton = document.getElementById('btn-developer-info');
+      const closeDeveloperInfo = () => {
+        developerInfoPanel.classList.add('hidden');
+        developerInfoButton.setAttribute('aria-expanded', 'false');
+      };
+      developerInfoButton.addEventListener('click', () => {
+        const isHidden = developerInfoPanel.classList.toggle('hidden');
+        developerInfoButton.setAttribute('aria-expanded', String(isHidden ? 'false' : 'true'));
+      });
+      document.getElementById('btn-close-developer-info').addEventListener('click', closeDeveloperInfo);
+      developerInfoPanel.addEventListener('click', e => {
+        if (e.target === developerInfoPanel) closeDeveloperInfo();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          closeMethodology();
+          closeDeveloperInfo();
+          closeLegalModal();
+        }
+      });
+
+      // Coordinate / road corridor search
+      async function runCoordinateSearch(lat, lon) {
+        document.getElementById('input-lat').value = lat;
+        document.getElementById('input-lon').value = lon;
+        map.setView([lat, lon], 12);
+        const d = await (await fetch('/api/idw', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lon })
+        })).json();
+        document.getElementById('input-elevation').value = d.elevation;
+        document.getElementById('input-slope').value = d.slope;
+        document.getElementById('input-rainfall').value = d.rainfall;
+        document.getElementById('input-aspect').value = d.aspect;
+        setGISStatus(d.status);
+        updateParameterChart(d);
+      }
+
+      const searchInput = document.getElementById('header-search-input');
+      async function runHeaderSearch() {
+        const query = searchInput.value
+          .replace(/[\u0000-\u001F\u007F]/g, '')
+          .trim()
+          .slice(0, 120);
+        if (!query) return;
+        const status = document.getElementById('gis-status-banner').querySelector('p');
+        setGISStatus('Mencari lokasi...');
+
+        try {
+          let lat;
+          let lon;
+          let label;
+
+          if (window.currentBasemap === 'sat') {
+            const url = `https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=pjson&SingleLine=${encodeURIComponent(query)}&outFields=Match_addr,LongLabel`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Pencarian ArcGIS gagal (${response.status})`);
+            const data = await response.json();
+            const candidate = data.candidates && data.candidates[0];
+            if (!candidate) throw new Error('Lokasi tidak ditemukan');
+            lat = candidate.location.y;
+            lon = candidate.location.x;
+            label = candidate.attributes?.LongLabel || candidate.attributes?.Match_addr || query;
+          } else {
+            const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}&accept-language=id`;
+            const response = await fetch(url, {
+              headers: { 'Accept': 'application/json' }
+            });
+            if (!response.ok) throw new Error(`Pencarian OSM gagal (${response.status})`);
+            const data = await response.json();
+            if (!data.length) throw new Error('Lokasi tidak ditemukan');
+            lat = parseFloat(data[0].lat);
+            lon = parseFloat(data[0].lon);
+            label = data[0].display_name;
+          }
+
+          map.setView([lat, lon], 13);
+          setGISStatus(`Lokasi ditemukan: ${label}`);
+        } catch (error) {
+          setGISStatus(error.message);
+        }
+      }
+      searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          runHeaderSearch();
+        }
+      });
+
+      // Opacity controls
+      let nodeOpacityFrame = null;
+      document.getElementById('layer-op-nodes').addEventListener('input', e => {
+        const opacity = Number(e.target.value) / 100;
+        if (nodeOpacityFrame !== null) cancelAnimationFrame(nodeOpacityFrame);
+        nodeOpacityFrame = requestAnimationFrame(() => {
+          nodeGroup.eachLayer(layer => layer.setStyle({
+            opacity,
+            fillOpacity: opacity
+          }));
+          nodeOpacityFrame = null;
+        });
+      });
+      document.getElementById('layer-op-roads').addEventListener('input', e => {
+        const opacity = Number(e.target.value) / 100;
+        roadGroup.setStyle({ opacity, fillOpacity: opacity });
+      });
+      document.getElementById('layer-op-chirps').addEventListener('input', e => {
+        const opacity = Number(e.target.value) / 100;
+        if (typeof chirpsHeat.setOpacity === 'function') chirpsHeat.setOpacity(opacity);
+        if (typeof chirpsHeat.getContainer === 'function') chirpsHeat.getContainer().style.opacity = opacity;
+        if (chirpsHeat._canvas) chirpsHeat._canvas.style.opacity = opacity;
+        const canvas = document.querySelector('.leaflet-heatmap-layer');
+        if (canvas) canvas.style.opacity = opacity;
+      });
+      document.getElementById('layer-op-slope').addEventListener('input', e => {
+        const opacity = Number(e.target.value) / 100;
+        if (typeof slopeHeat.setOpacity === 'function') slopeHeat.setOpacity(opacity);
+        if (typeof slopeHeat.getContainer === 'function') slopeHeat.getContainer().style.opacity = opacity;
+        if (slopeHeat._canvas) slopeHeat._canvas.style.opacity = opacity;
+        const canvases = document.querySelectorAll('.leaflet-heatmap-layer');
+        canvases.forEach((canvas, index) => {
+          if (index === 1) canvas.style.opacity = opacity;
+        });
+      });
+
+      // Drag-and-drop layer ordering
+      const layerList = document.getElementById('layer-list');
+      let draggedLayerCard = null;
+
+      function syncMapLayerOrder() {
+        const cards = Array.from(layerList.querySelectorAll('[data-layer]'));
+        const mapLayers = {
+          nodes: nodeGroup,
+          roads: roadGroup,
+          chirps: chirpsHeat,
+          slope: slopeHeat
+        };
+
+        cards.forEach((card, index) => {
+          const layer = mapLayers[card.dataset.layer];
+          if (!layer) return;
+          if (typeof layer.setZIndex === 'function') layer.setZIndex(410 + index);
+          if (layer._canvas) layer._canvas.style.zIndex = String(410 + index);
+        });
+
+        // Bring Leaflet overlays in reverse TOC order so the top TOC item is displayed on top.
+        for (let index = cards.length - 1; index >= 0; index -= 1) {
+          const layerName = cards[index].dataset.layer;
+          const layer = mapLayers[layerName];
+          if (layerName === 'nodes' && layer) {
+            layer.eachLayer(marker => {
+              if (typeof marker.bringToFront === 'function') marker.bringToFront();
+            });
+          } else if (layerName === 'roads' && typeof roadGroup.bringToFront === 'function') {
+            roadGroup.bringToFront();
+          }
+        }
+      }
+
+      layerList.querySelectorAll('[data-layer]').forEach(card => {
+        const handle = card.querySelector('.layer-drag-handle');
+        card.style.transition = 'transform 180ms ease, opacity 180ms ease, border-color 180ms ease, box-shadow 180ms ease';
+        card.querySelectorAll('input').forEach(control => {
+          control.draggable = false;
+          control.addEventListener('mousedown', e => e.stopPropagation());
+          control.addEventListener('dragstart', e => e.preventDefault());
+        });
+        handle.addEventListener('dragstart', e => {
+          e.stopPropagation();
+          draggedLayerCard = card;
+          card.classList.add('opacity-60', 'border-cobalt-blue', 'shadow-md', 'scale-[0.98]');
+          const dragPreview = card.cloneNode(true);
+          dragPreview.style.position = 'fixed';
+          dragPreview.style.top = '-1000px';
+          dragPreview.style.width = `${card.offsetWidth}px`;
+          dragPreview.style.pointerEvents = 'none';
+          document.body.appendChild(dragPreview);
+          e.dataTransfer.setDragImage(dragPreview, 20, 20);
+          requestAnimationFrame(() => dragPreview.remove());
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', card.dataset.layer);
+        });
+        handle.addEventListener('dragend', () => {
+          card.classList.remove('opacity-60', 'border-cobalt-blue', 'shadow-md', 'scale-[0.98]');
+          layerList.querySelectorAll('[data-layer]').forEach(item => {
+            item.classList.remove('border-t-4', 'border-t-cobalt-blue', '-translate-y-1');
+          });
+          draggedLayerCard = null;
+        });
+        card.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (!draggedLayerCard || draggedLayerCard === card) return;
+          layerList.querySelectorAll('[data-layer]').forEach(item => {
+            item.classList.remove('border-t-4', 'border-t-cobalt-blue', '-translate-y-1');
+          });
+          card.classList.add('border-t-4', 'border-t-cobalt-blue', '-translate-y-1');
+        });
+        card.addEventListener('drop', e => {
+          e.preventDefault();
+          if (!draggedLayerCard || draggedLayerCard === card) return;
+          const targetRect = card.getBoundingClientRect();
+          const insertAfter = e.clientY > targetRect.top + targetRect.height / 2;
+          layerList.insertBefore(draggedLayerCard, insertAfter ? card.nextSibling : card);
+          draggedLayerCard.classList.add('ring-2', 'ring-cobalt-blue');
+          setTimeout(() => draggedLayerCard && draggedLayerCard.classList.remove('ring-2', 'ring-cobalt-blue'), 450);
+          layerList.querySelectorAll('[data-layer]').forEach(item => {
+            item.classList.remove('border-t-4', 'border-t-cobalt-blue', '-translate-y-1');
+          });
+          syncMapLayerOrder();
+        });
+      });
+
+      // Data node dimuat saat pengguna memilih node; tanpa prediksi otomatis saat halaman terbuka.
+    })();
+  </script>
+
+
+</body>
+
+</html>

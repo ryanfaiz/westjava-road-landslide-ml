@@ -1,0 +1,42 @@
+SYARAT DAN KETENTUAN PENGGUNAAN (TERMS AND CONDITIONS)
+Aplikasi WebGIS Pemodelan Kerentanan dan Paparan Longsor Koridor Jalan Provinsi Jawa Barat
+Terakhir diperbarui: November 2026
+
+1. PENERIMAAN KETENTUAN
+Dengan mengakses dan menggunakan aplikasi web, peta interaktif, model prediktif, maupun repositori kode sumber ("Layanan") pada proyek "Pemodelan Kerentanan dan Paparan Longsor Berbasis Machine Learning di Sepanjang Koridor Jalan Provinsi Jawa Barat", Anda menyatakan telah membaca, memahami, dan menyetujui untuk terikat pada Syarat dan Ketentuan ini. Apabila Anda tidak menyetujui bagian mana pun dari ketentuan ini, harap hentikan penggunaan Layanan.
+
+2. TUJUAN DAN RUANG LINGKUP LAYANAN
+Layanan ini dikembangkan sebagai purwarupa sistem pendukung keputusan (Decision Support System) berbasis penelitian akademik oleh Kelompok 7 (Kelas A), Program Studi Teknologi Rekayasa Komputer, Sekolah Vokasi IPB University. Layanan menyediakan visualisasi geospasial dan estimasi probabilitas kerentanan serta paparan longsor pada buffer koridor 500 meter di sepanjang jaringan jalan provinsi Jawa Barat menggunakan parameter topografi dan hidro-meteorologi.
+
+3. PENYANGKALAN TEKNIS DAN BATASAN TANGGUNG JAWAB (DISCLAIMER)
+a. Sifat Indikatif Hasil Prediksi: Seluruh skor probabilitas, klasifikasi zonasi kerentanan (Rendah, Sedang, Tinggi, Sangat Tinggi), dan perhitungan panjang segmen jalan terpapar dihasilkan oleh model statistik dan Machine Learning berdasarkan data historis serta resolusi spasial tertentu. Hasil tersebut bersifat indikatif untuk kajian awal dan edukasi.
+b. Bukan Pengganti Survei Geoteknik atau Peringatan Dini Resmi: Layanan ini BUKAN merupakan sistem peringatan dini bencana (Early Warning System) real-time dan tidak menggantikan inspeksi geoteknik lapangan, kajian rekayasa sipil, maupun informasi serta arahan resmi dari instansi berwenang seperti Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Meteorologi, Klimatologi, dan Geofisika (BMKG), Badan Nasional Penanggulangan Bencana (BNPB), atau BPBD setempat.
+c. Pembebasan Tanggung Jawab: Tim pengembang dan Sekolah Vokasi IPB University tidak bertanggung jawab atas kerugian langsung, tidak langsung, insidental, maupun konsekuensial yang timbul akibat keputusan operasional, perencanaan infrastruktur, atau tindakan di lapangan yang diambil semata-mata berdasarkan keluaran dari Layanan ini.
+
+4. HAK KEKAYAAN INTELEKTUAL DAN ATRIBUSI DATA
+a. Kode Sumber dan Antarmuka: Kode pemrosesan data, arsitektur pelatihan model, dan antarmuka WebGIS dikembangkan oleh tim mahasiswa Kelompok 7 Kelas A, Teknologi Rekayasa Komputer, Sekolah Vokasi IPB University untuk tujuan akademik dan pengembangan ilmu pengetahuan.
+b. Sumber Data Pihak Ketiga: Dataset dasar yang digunakan dalam pemodelan bersumber dari penyedia data publik resmi, meliputi:
+   - Jaringan Jalan Provinsi Jawa Barat: Sistem Informasi Geografis Infrastruktur (SIGI) Kementerian PUPR.
+   - Data Elevasi Digital (DEM / Topografi): Copernicus Data Space Ecosystem.
+   - Peta Zonasi Kerentanan Gerak Tanah: PVMBG, Badan Geologi, Kementerian ESDM.
+   - Data Curah Hujan Tahunan: Climate Hazards Group InfraRed Precipitation with Station data (CHIRPS v2.0).
+Pengguna yang memanfaatkan kembali turunan data atau hasil pemodelan wajib mencantumkan sitasi dan atribusi yang sesuai kepada penyedia data asal serta tim pengembang.
+
+5. PENGGUNAAN YANG DILARANG
+Pengguna dilarang untuk:
+a. Menggunakan Layanan atau keluarannya untuk menyebarkan informasi palsu (hoaks) terkait kebencanaan yang dapat menimbulkan kepanikan publik.
+b. Melakukan tindakan yang mengganggu stabilitas server, mengirim permintaan otomatis secara berlebihan (scraping/DDoS), atau mencoba mengeksploitasi celah keamanan aplikasi.
+c. Mengklaim hasil pemodelan atau antarmuka aplikasi ini sebagai karya pribadi atau menggunakannya untuk kepentingan komersial tanpa izin tertulis dari tim pengembang.
+
+6. PERUBAHAN DAN KETERSEDIAAN LAYANAN
+Karena Layanan ini merupakan purwarupa riset akademik, tim pengembang berhak untuk memperbarui model, mengubah parameter fitur, memodifikasi antarmuka, atau menghentikan akses Layanan sewaktu-waktu tanpa pemberitahuan sebelumnya.
+
+7. HUKUM YANG BERLAKU
+Syarat dan Ketentuan ini diatur dan ditafsirkan berdasarkan hukum yang berlaku di Negara Kesatuan Republik Indonesia.
+
+8. KONTAK PENGEMBANG
+Untuk pertanyaan akademik, masukan teknis, atau permintaan kolaborasi, silakan hubungi tim pengembang:
+Kelompok 7 - Kelas A (Teknologi Rekayasa Komputer, Sekolah Vokasi IPB University)
+- Dzaky Naufal Putra Raditio (J0404241020)
+- Ryan Faiz Sanie (J0404241078)
+- Ratu Festiza Alya Ichsan (J0404241174)

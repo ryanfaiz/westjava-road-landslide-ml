@@ -1,0 +1,20 @@
+services:
+  webgis:
+    container_name: westjava-landslide-webgis
+    image: westjava-landslide-webgis:2026
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3).read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

@@ -1,0 +1,38 @@
+KEBIJAKAN PRIVASI (PRIVACY POLICY)
+Aplikasi WebGIS Pemodelan Kerentanan dan Paparan Longsor Koridor Jalan Provinsi Jawa Barat
+Terakhir diperbarui: November 2026
+
+1. PENDAHULUAN
+Kebijakan Privasi ini menjelaskan bagaimana tim pengembang proyek "Pemodelan Kerentanan dan Paparan Longsor Berbasis Machine Learning di Sepanjang Koridor Jalan Provinsi Jawa Barat" (Kelompok 7 Kelas A, Teknologi Rekayasa Komputer, Sekolah Vokasi IPB University) mengelola informasi saat Anda mengakses dan menggunakan antarmuka WebGIS kami. Kami berkomitmen menjaga privasi pengguna sejalan dengan prinsip pelindungan data yang berlaku di Indonesia, termasuk Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP).
+
+2. INFORMASI YANG KAMI KUMPULKAN
+Layanan ini dirancang agar dapat digunakan tanpa memerlukan pendaftaran akun maupun pengisian identitas pribadi (seperti nama lengkap, NIK, nomor telepon, atau alamat email). Informasi yang diproses terbatas pada:
+a. Data Parameter Input Pengguna: Nilai variabel lingkungan dan spasial yang Anda masukkan secara manual atau pilih pada antarmuka aplikasi (seperti koordinat lokasi, ketinggian/elevation, kemiringan lereng/slope, arah hadap lereng/aspect, dan curah hujan/rainfall) untuk keperluan simulasi prediksi.
+b. Data Teknis dan Log Akses Otomatis: Saat Anda mengakses aplikasi melalui peramban web, infrastruktur hosting (seperti Gradio atau platform cloud tempat aplikasi dijalankan) dapat mencatat data teknis standar secara otomatis, seperti alamat Protokol Internet (IP), jenis peramban (browser), sistem operasi, halaman rujukan, dan stempel waktu akses.
+
+3. TUJUAN PENGGUNAAN INFORMASI
+Informasi yang diproses digunakan secara terbatas untuk:
+a. Menjalankan proses inferensi model Machine Learning dan menampilkan hasil zonasi kerentanan serta paparan longsor pada peta interaktif.
+b. Memastikan keamanan sistem, mencegah penyalahgunaan akses, dan memantau stabilitas kinerja aplikasi.
+c. Keperluan evaluasi dan pengembangan sistem dalam lingkup riset akademik non-komersial.
+
+4. PENYIMPANAN DAN RETENSI DATA
+a. Pemrosesan Sementara (Ephemeral): Seluruh parameter lingkungan maupun koordinat yang dimasukkan pengguna ke dalam kalkulator prediksi diproses secara langsung di dalam memori sementara (in-memory) selama sesi berlangsung dan tidak disimpan ke dalam basis data permanen yang terhubung dengan identitas pribadi Anda.
+b. Log Infrastruktur: Log teknis pada tingkat server hanya disimpan sementara sesuai kebijakan retensi standar penyedia layanan hosting untuk keperluan pemecahan masalah teknis (debugging) dan keamanan jaringan.
+
+5. LAYANAN PIHAK KETIGA
+Untuk menyajikan fungsionalitas peta dan antarmuka interaktif, aplikasi ini memuat komponen atau lapisan peta dasar (basemap tiles) dari penyedia pihak ketiga seperti Folium, OpenStreetMap, CartoDB, atau layanan hosting cloud. Penyedia pihak ketiga tersebut dapat menerima alamat IP Anda saat peramban memuat ubin peta atau antarmuka. Penggunaan layanan pihak ketiga tersebut tunduk pada kebijakan privasi masing-masing penyedia. Kami tidak pernah menjual, menyewakan, atau memperdagangkan data pengguna kepada pihak mana pun.
+
+6. KEAMANAN DATA
+Kami menerapkan langkah-langkah pengamanan teknis yang wajar, termasuk penggunaan protokol enkripsi transmisi data (HTTPS) dan validasi masukan parameter, untuk melindungi integritas proses komputasi dari akses yang tidak sah.
+
+7. HAK PENGGUNA
+Sesuai dengan ketentuan peraturan perundang-undangan yang berlaku, Anda berhak untuk mengetahui tujuan pemrosesan data pada Layanan ini, menghentikan penggunaan Layanan kapan saja, serta menghubungi tim pengembang apabila memiliki pertanyaan atau kekhawatiran terkait aspek privasi dalam penggunaan aplikasi.
+
+8. PERUBAHAN KEBIJAKAN PRIVASI
+Kebijakan Privasi ini dapat diperbarui sewaktu-waktu apabila terdapat penambahan fitur baru pada aplikasi WebGIS (seperti fitur unggah berkas spasial atau penyimpanan riwayat analisis). Perubahan akan diumumkan melalui pembaruan tanggal pada bagian atas dokumen ini.
+
+9. HUBUNGI KAMI
+Apabila Anda memiliki pertanyaan mengenai Kebijakan Privasi ini, silakan hubungi tim pengembang melalui repositori proyek resmi atau melalui kontak akademik:
+Kelompok 7 - Kelas A (Program Studi Teknologi Rekayasa Komputer, Sekolah Vokasi IPB University)
+Bogor, Jawa Barat, Indonesia.

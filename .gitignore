@@ -1,0 +1,20 @@
+# Python virtual environments
+venv/
+.venv/
+
+# Python generated cache and bytecode
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Local environment, logs, and secrets
+.env
+.env.*
+*.log
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
