@@ -1,11 +1,5 @@
 # Pemodelan Kerentanan dan Paparan Longsor Koridor Jalan Provinsi Jawa Barat
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.3%2B-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)
-![GeoPandas](https://img.shields.io/badge/GeoPandas-Spatial_GIS-139C5A?style=for-the-badge&logo=python&logoColor=white)
-![Gradio](https://img.shields.io/badge/Gradio-WebGIS_App-FF7C00?style=for-the-badge&logo=gradio&logoColor=white)
-![IPB University](https://img.shields.io/badge/IPB_University-Sekolah_Vokasi-003366?style=for-the-badge)
-
 Sistem pemodelan spasial berbasis *Machine Learning* dan purwarupa **WebGIS interaktif** untuk memetakan tingkat kerentanan tanah longsor serta mengestimasi panjang segmen jalan terpapar (*road exposure assessment*) di sepanjang **297 ruas koridor jalan provinsi Jawa Barat, Indonesia**.
 
 Proyek ini dikembangkan sebagai bagian dari mata kuliah **Pembelajaran Mesin (TEK1302)**, Program Studi **Teknologi Rekayasa Komputer, Sekolah Vokasi IPB University**.
@@ -47,7 +41,7 @@ Proyek ini dikembangkan sebagai bagian dari mata kuliah **Pembelajaran Mesin (TE
 1. **Komparasi Algoritma Klasifikasi:** Membangun dan membandingkan performa 4 algoritma *Machine Learning* (**Logistic Regression**, **Random Forest**, **XGBoost**, dan **Support Vector Machine**) pada zona penyangga (*buffer*) jalan sejauh $500\text{ m}$.
 2. **Validasi Spasial Bebas Data Leakage:** Menerapkan skema **5-Fold Spatial Block Cross-Validation** berbasis klaster koordinat *KMeans* untuk menguji daya generalisasi model pada wilayah geografis yang benar-benar asing.
 3. **Analisis Faktor Pemicu:** Mengukur kontribusi variabel topografi dan hidro-meteorologi serta memastikan independensi fitur melalui uji multikolinearitas (*Variance Inflation Factor* / VIF).
-4. **Hilirisasi WebGIS Interaktif:** Mengembangkan purwarupa aplikasi berbasis **Gradio** dan **Folium** untuk visualisasi peta zonasi kerentanan dan kalkulasi panjang ruas jalan terpapar ($\text{km}$).
+4. **Hilirisasi WebGIS Interaktif:** Mengembangkan purwarupa aplikasi berbasis **FastAPI** dan **HTML/JavaScript** untuk visualisasi peta zonasi kerentanan dan kalkulasi panjang ruas jalan terpapar ($\text{km}$).
 
 ---
 
@@ -111,39 +105,78 @@ Evaluasi menggunakan **5-Fold Spatial Block Cross-Validation** menghasilkan perb
 
 ### Struktur Direktori
 ```text
+westjava-road-landslide-ml/
+├── app.py                              # API FastAPI dan logika prediksi/pemrosesan spasial
 ├── data/
-│   ├── raw/                  # Dataset mentah (Shapefile Jalan PUPR, DEM, CHIRPS, ZKGT)
-│   └── processed/            # Dataset tabular bersih hasil ekstraksi buffer 500 m (651 sampel)
-├── notebooks/
-│   └── eksperimen_ml.ipynb   # Notebook EDA, VIF, Spatial Block CV, dan komparasi model
+│   ├── dataset_landslide_corridor_clean.csv
+│   └── shapefile_igt_2021_jalan_daerah_v2/
+│       └── data_1793852851_7e866142.{shp,shx,dbf,prj}
+├── docs/
+│   ├── privacy.txt                     # Dokumen kebijakan privasi
+│   └── toc.txt                         # Dokumen ketentuan penggunaan
 ├── models/
-│   └── lr_landslide_pipeline.joblib  # Pipeline model Logistic Regression terlatih
-├── app.py                    # Aplikasi WebGIS interaktif berbasis Gradio & Folium
-├── requirements.txt          # Daftar pustaka Python yang dibutuhkan
-└── README.md                 # Dokumentasi proyek
+│   ├── landslide_model_lr.pkl          # Model Logistic Regression
+│   ├── landslide_model_rf.pkl          # Model Random Forest
+│   ├── landslide_model_svm.pkl         # Model Support Vector Machine
+│   ├── landslide_model_xgb.json        # Model XGBoost
+│   └── spatial_scaler.pkl              # StandardScaler untuk prapemrosesan
+├── static/
+│   ├── index.html                      # Antarmuka WebGIS
+│   ├── favicon.ico
+│   └── logo.webp
+├── img/
+│   └── logo.webp
+├── Dockerfile                          # Image aplikasi Python
+├── docker-compose.yaml                 # Orkestrasi layanan WebGIS
+├── requirements.txt                    # Dependensi lingkungan lokal
+├── requirements-docker.txt             # Dependensi image Docker
+├── .dockerignore
+└── README.md
 ```
 
 ### Panduan Instalasi & Menjalankan Aplikasi
 
-1. **Kloning Repositori**
+#### Prasyarat
+
+- Python `3.11` (disarankan)
+- Pip dan `venv`
+- Docker Desktop atau Docker Engine + Docker Compose *(opsional untuk instalasi Docker)*
+
+#### Instalasi Lokal
+
+1. **Kloning repositori**
    ```bash
    git clone https://github.com/ryanfaiz/westjava-road-landslide-ml.git
    cd westjava-road-landslide-ml
    ```
 
-2. **Buat Virtual Environment & Instal Dependensi**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Untuk Windows: venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
-   *(Dependensi utama: `numpy`, `pandas`, `scikit-learn`, `xgboost`, `geopandas`, `rasterio`, `folium`, `gradio`, `joblib`, `matplotlib`, `seaborn`)*
+2. **Buat virtual environment dan instal dependensi**
 
-3. **Jalankan Purwarupa WebGIS**
-   ```bash
-   python app.py
+   **Windows (PowerShell):**
+   ```powershell
+   py -3.11 -m venv venv
+   .\venv\Scripts\Activate.ps1
+   python -m pip install --upgrade pip
+   python -m pip install -r requirements.txt
    ```
-   Buka tautan lokal yang muncul di terminal (umumnya `http://127.0.0.1:7860`) untuk mengakses peta kerentanan interaktif, ringkasan panjang segmen terpapar ($\text{km}$), dan simulator prediksi parameter lereng.
+
+   **Linux atau macOS:**
+   ```bash
+   python3.11 -m venv venv
+   source venv/bin/activate
+   python -m pip install --upgrade pip
+   python -m pip install -r requirements.txt
+   ```
+
+   Dependensi utama meliputi FastAPI, Uvicorn, Pandas, NumPy, GeoPandas, SciPy, Scikit-learn, XGBoost, Joblib, Shapely, dan Pydantic.
+
+3. **Jalankan aplikasi**
+   ```bash
+   uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+   ```
+   Buka `http://127.0.0.1:8000`. Dokumentasi API otomatis tersedia di `http://127.0.0.1:8000/docs`.
+
+Untuk menjalankan aplikasi dengan satu perintah tanpa menyiapkan environment Python:
 
 ### Menjalankan dengan Docker Compose
 
@@ -151,7 +184,11 @@ Evaluasi menggunakan **5-Fold Spatial Block Cross-Validation** menghasilkan perb
 docker compose up --build
 ```
 
-Aplikasi tersedia di `http://localhost:8000`.
+Aplikasi tersedia di `http://localhost:8000`. Untuk menghentikan dan menghapus container:
+
+```bash
+docker compose down
+```
 
 ---
 
@@ -181,4 +218,4 @@ Aplikasi tersedia di `http://localhost:8000`.
 | :--- | :---: | :--- |
 | **Ratu Festiza Alya Ichsan** | `J0404241174` | **Data Engineering & EDA Spasial:** Akuisisi data PUPR, DEM, CHIRPS, & ZKGT; reproyeksi UTM 48S; ekstraksi *buffer* $500\text{ m}$; visualisasi EDA & uji VIF. |
 | **Ryan Faiz Sanie** | `J0404241078` | **Modeling & Validasi Spasial:** *Feature engineering* trigonometri; implementasi *5-Fold Spatial Block CV* (*KMeans*); pelatihan dan evaluasi 4 model ML. |
-| **Dzaky Naufal Putra Raditio** | `J0404241020` | **WebGIS Deployment & Integrasi:** Serialisasi pipeline `.joblib`; pengembangan antarmuka WebGIS **Gradio + Folium**; kalkulasi paparan segmen ($\text{km}$). |
+| **Dzaky Naufal Putra Raditio** | `J0404241020` | **WebGIS Deployment & Integrasi:** Serialisasi pipeline `.pkl`/`.json`; pengembangan antarmuka dan API WebGIS **FastAPI + HTML/JavaScript**; kalkulasi paparan segmen ($\text{km}$). |
