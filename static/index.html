@@ -1284,6 +1284,16 @@
         map.invalidateSize();
       }
 
+      function openProcessingPanel() {
+        rightSidebar.classList.remove('hidden');
+        if (mobileLayoutQuery.matches) {
+          mobileDrawer.classList.add('is-open');
+          mobileDrawerToggle.setAttribute('aria-expanded', 'true');
+          mobileDrawerToggle.querySelector('.material-symbols-outlined').textContent = 'expand_more';
+        }
+        window.setTimeout(() => map.invalidateSize(), 220);
+      }
+
       mobileDrawerToggle.addEventListener('click', () => {
         const isOpen = mobileDrawer.classList.toggle('is-open');
         mobileDrawerToggle.setAttribute('aria-expanded', String(isOpen));
@@ -1735,6 +1745,7 @@
       });
 
       document.getElementById('btn-extract-gis').addEventListener('click', async () => {
+        openProcessingPanel();
         const lat = Number(document.getElementById('input-lat').value);
         const lon = Number(document.getElementById('input-lon').value);
         if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lon) || lon < -180 || lon > 180) {
@@ -1771,6 +1782,7 @@
         document.getElementById('floating-node-popup').classList.add('hidden');
       });
       document.getElementById('btn-popup-extract').addEventListener('click', () => {
+        openProcessingPanel();
         const idx = parseInt(document.getElementById('input-node-index').value, 10);
         loadByIndex(idx);
       });
