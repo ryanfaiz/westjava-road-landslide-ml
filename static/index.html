@@ -691,7 +691,7 @@
                   <span class="layer-drag-handle material-symbols-outlined text-[14px] text-light-outline cursor-grab shrink-0 select-none"
                     draggable="true"
                     aria-hidden="true">drag_indicator</span>
-                  <input id="layer-chk-wilayah" type="checkbox"
+                  <input id="layer-chk-wilayah" type="checkbox" checked
                     class="w-3.5 h-3.5 rounded-sm border-border-crisp text-cobalt-blue focus:ring-cobalt-blue cursor-pointer">
                   <label for="layer-chk-wilayah"
                     class="font-label text-label-md text-light-on-surface truncate cursor-pointer"
@@ -993,7 +993,8 @@
 
           <!-- Compact Status Banner -->
           <div id="gis-status-banner"
-            class="p-gutter-sm rounded bg-light-secondary-container border border-light-outline-variant flex items-start gap-2">
+            class="p-gutter-sm rounded bg-light-secondary-container border border-light-outline-variant flex items-start gap-2"
+            role="status" aria-live="polite">
             <span class="material-symbols-outlined text-[16px] text-light-primary shrink-0 mt-0.5"
               aria-hidden="true">check_circle</span>
             <p class="flex-1 font-body text-body-sm text-light-on-secondary-container" data-design-text-token="body-sm">
@@ -1616,6 +1617,12 @@
       wilayahGroup.eachLayer(layer => {
         if (typeof layer.bringToBack === 'function') layer.bringToBack();
       });
+      if (wilayahGeoJson.features && wilayahGeoJson.features.length > 0) {
+        wilayahGroup.addTo(map);
+        wilayahGroup.eachLayer(layer => {
+          if (typeof layer.bringToBack === 'function') layer.bringToBack();
+        });
+      }
       document.getElementById('layer-op-wilayah').addEventListener('input', e => {
         const opacity = Number(e.target.value) / 100;
         wilayahGroup.setStyle({ opacity, fillOpacity: opacity * 0.32 });
@@ -1716,7 +1723,46 @@
       }
 
       function setGISStatus(message) {
-        document.getElementById('gis-status-banner').querySelector('p').textContent = message;
+        const banner = document.getElementById('gis-status-banner');
+        const text = banner.querySelector('p');
+        const icon = banner.querySelector('.material-symbols-outlined');
+        const normalizedMessage = String(message || '').toLowerCase();
+        const isError = [
+          'gagal',
+          'error',
+          'tidak valid',
+          'di luar',
+          'ditolak',
+          'tidak ditemukan',
+          'habis waktu',
+          'tidak tersedia',
+          'berubah saat',
+        ].some(keyword => normalizedMessage.includes(keyword));
+
+        text.textContent = message;
+        banner.classList.remove(
+          'bg-light-secondary-container',
+          'border-light-outline-variant',
+          'bg-light-error-container',
+          'border-light-error'
+        );
+        text.classList.remove('text-light-on-secondary-container', 'text-light-on-error-container');
+        icon.classList.remove('text-light-primary', 'text-light-error');
+
+        if (isError) {
+          banner.classList.add('bg-light-error-container', 'border-light-error');
+          text.classList.add('text-light-on-error-container');
+          icon.classList.add('text-light-error');
+          icon.textContent = 'error';
+          banner.setAttribute('aria-live', 'assertive');
+        } else {
+          banner.classList.add('bg-light-secondary-container', 'border-light-outline-variant');
+          text.classList.add('text-light-on-secondary-container');
+          icon.classList.add('text-light-primary');
+          icon.textContent = 'check_circle';
+          banner.setAttribute('aria-live', 'polite');
+        }
+
         const idwButton = document.getElementById('btn-idw-info');
         idwButton.classList.toggle('hidden', !message.includes('Ter-interpolasi IDW'));
       }
@@ -1819,17 +1865,22 @@
         const lat = Number(document.getElementById('input-lat').value);
         const lon = Number(document.getElementById('input-lon').value);
         if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lon) || lon < -180 || lon > 180) {
-          setGISStatus('Koordinat tidak valid');
+          setGISStatus('Koordinat tidak valid. Pastikan Latitude dan Longitude dalam rentang yang benar.');
           invalidatePredictionData();
           return;
         }
         const requestedCoordinate = getCoordinateKey(lat, lon);
         invalidatePredictionData();
-        const d = await (await fetch('/api/idw', {
+        const response = await fetch('/api/idw', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lat, lon })
-        })).json();
+        });
+        const d = await response.json();
+        if (!response.ok) {
+          setGISStatus(d.detail || 'Ekstraksi lokasi gagal. Silakan coba titik koordinat lainnya.');
+          return;
+        }
         const currentCoordinate = getCoordinateKey(
           document.getElementById('input-lat').value,
           document.getElementById('input-lon').value
@@ -2017,11 +2068,16 @@
         document.getElementById('input-lat').value = lat;
         document.getElementById('input-lon').value = lon;
         map.setView([lat, lon], 12);
-        const d = await (await fetch('/api/idw', {
+        const response = await fetch('/api/idw', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lat, lon })
-        })).json();
+        });
+        const d = await response.json();
+        if (!response.ok) {
+          setGISStatus(d.detail || 'Ekstraksi lokasi gagal. Silakan coba titik koordinat lainnya.');
+          return;
+        }
         document.getElementById('input-elevation').value = d.elevation;
         document.getElementById('input-slope').value = d.slope;
         document.getElementById('input-rainfall').value = d.rainfall;

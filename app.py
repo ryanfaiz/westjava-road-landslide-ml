@@ -11,6 +11,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel
+from shapely.geometry import Point
 
 app = FastAPI(title="Web GIS Landslide Susceptibility Engine")
 
@@ -105,6 +106,7 @@ gdf_wilayah["geometry"] = gdf_wilayah.geometry.simplify(
     preserve_topology=True,
 )
 WILAYAH_GEOJSON = json.loads(gdf_wilayah.to_json())
+WILAYAH_UNION = gdf_wilayah.geometry.union_all()
 
 MAP_NODES_CACHE = None
 WILAYAH_CACHE = None
@@ -205,9 +207,22 @@ def get_node_by_index(point_id: int):
 @app.post("/api/idw")
 def interpolate_location(req: CoordRequest):
     if not math.isfinite(req.lat) or not (-90 <= req.lat <= 90):
-        raise HTTPException(status_code=422, detail="Latitude tidak valid")
+        raise HTTPException(
+            status_code=422,
+            detail="Koordinat tidak valid. Pastikan Latitude berada pada rentang -90 sampai 90.",
+        )
     if not math.isfinite(req.lon) or not (-180 <= req.lon <= 180):
-        raise HTTPException(status_code=422, detail="Longitude tidak valid")
+        raise HTTPException(
+            status_code=422,
+            detail="Koordinat tidak valid. Pastikan Longitude berada pada rentang -180 sampai 180.",
+        )
+
+    if not WILAYAH_UNION.covers(Point(req.lon, req.lat)):
+        raise HTTPException(
+            status_code=422,
+            detail="Titik yang Anda pilih berada di luar batas administrasi Provinsi Jawa Barat. Silakan pilih lokasi lain di dalam wilayah Jawa Barat untuk melanjutkan ekstraksi data.",
+        )
+
     dists, indices = spatial_tree.query([req.lat, req.lon], k=5)
     dists = np.maximum(dists, 1e-6)
     weights = (1.0 / (dists ** 2))
