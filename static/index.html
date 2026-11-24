@@ -1375,6 +1375,7 @@
 
       let coordinatePickerActive = false;
       let coordinatePickerMarker = null;
+      let popupSelectionType = 'node';
       const coordinatePickerButton = document.getElementById('map-coordinate-picker');
 
       function setCoordinatePickerMode(active) {
@@ -1425,6 +1426,7 @@
       document.getElementById('input-node-index').addEventListener('input', invalidatePredictionData);
 
       function updateRandomLocationPopup(lat, lon) {
+        popupSelectionType = 'random';
         document.getElementById('popup-node-title').textContent = 'Lokasi Acak';
         document.getElementById('popup-road-name').textContent = '-';
         document.getElementById('popup-coords').textContent =
@@ -1436,19 +1438,13 @@
         badge.style.backgroundColor = '#CBD5E1';
         badge.classList.remove('text-light-on-surface');
         badge.classList.add('text-light-on-surface');
-        document.getElementById('btn-popup-extract').classList.add('hidden');
+        const extractButton = document.getElementById('btn-popup-extract');
+        extractButton.querySelector('span:last-child').textContent = 'Ekstrak Atribut Lokasi Ini';
+        extractButton.classList.remove('hidden');
         document.getElementById('floating-node-popup').classList.remove('hidden');
       }
 
-      coordinatePickerButton.addEventListener('click', () => {
-        setCoordinatePickerMode(!coordinatePickerActive);
-      });
-
-      map.on('click', event => {
-        if (!coordinatePickerActive) return;
-
-        const lat = event.latlng.lat;
-        const lon = event.latlng.lng;
+      function selectRandomLocation(lat, lon) {
         document.getElementById('input-lat').value = lat.toFixed(5);
         document.getElementById('input-lon').value = lon.toFixed(5);
         invalidatePredictionData();
@@ -1465,6 +1461,18 @@
         }).addTo(map);
 
         updateRandomLocationPopup(lat, lon);
+      }
+
+      coordinatePickerButton.addEventListener('click', () => {
+        setCoordinatePickerMode(!coordinatePickerActive);
+      });
+
+      map.on('click', event => {
+        if (!coordinatePickerActive) return;
+
+        const lat = event.latlng.lat;
+        const lon = event.latlng.lng;
+        selectRandomLocation(lat, lon);
         setGISStatus(`Koordinat dipilih: ${lat.toFixed(5)}, ${lon.toFixed(5)}`);
       });
 
@@ -1611,6 +1619,7 @@
       // Hubungkan Tombol UI ke API FastAPI
       function updatePopup(node) {
         if (!node) return;
+        popupSelectionType = 'node';
         document.getElementById('popup-node-title').textContent = `Node #${node.idx} — ${node.cls}`;
         document.getElementById('popup-road-name').textContent = node.road;
         document.getElementById('popup-coords').textContent = `${node.lat.toFixed(5)}, ${node.lon.toFixed(5)}`;
@@ -1622,7 +1631,9 @@
         badge.style.backgroundColor = node.color;
         badge.classList.remove('text-light-on-surface');
         badge.classList.add('text-light-on-surface');
-        document.getElementById('btn-popup-extract').classList.remove('hidden');
+        const extractButton = document.getElementById('btn-popup-extract');
+        extractButton.querySelector('span:last-child').textContent = 'Ekstrak Atribut Node Ini';
+        extractButton.classList.remove('hidden');
         document.getElementById('floating-node-popup').classList.remove('hidden');
       }
 
@@ -1784,6 +1795,10 @@
       });
       document.getElementById('btn-popup-extract').addEventListener('click', () => {
         openProcessingPanel();
+        if (popupSelectionType === 'random') {
+          document.getElementById('btn-extract-gis').click();
+          return;
+        }
         const idx = parseInt(document.getElementById('input-node-index').value, 10);
         loadByIndex(idx);
       });
@@ -1986,6 +2001,7 @@
           }
 
           map.setView([lat, lon], 13);
+          selectRandomLocation(lat, lon);
           setGISStatus(`Lokasi ditemukan: ${label}`);
         } catch (error) {
           setGISStatus(error.message);
