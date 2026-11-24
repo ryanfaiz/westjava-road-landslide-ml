@@ -536,7 +536,7 @@
               Sekolah Vokasi<br>
               IPB University
             </p>
-            <p class="mt-2 font-label text-label-sm">&copy; 2026 Developers</p>
+            <p class="mt-2 font-label text-label-sm">&copy; 2026 All Rights Reserved</p>
           </section>
           <section class="border-t border-border-crisp pt-gutter-md">
             <h3 class="font-label text-label-sm uppercase text-light-on-surface-variant mb-1.5">Sumber Data</h3>
@@ -562,11 +562,13 @@
         <!-- Sidebar Tabs -->
         <div class="grid grid-cols-2 border-b border-border-crisp bg-light-surface shrink-0" role="tablist">
           <button id="tab-btn-layers" type="button" role="tab" aria-selected="true"
+            aria-controls="tab-panel-layers" tabindex="0"
             class="py-2.5 px-gutter-sm font-title text-title-sm text-light-primary border-b-2 border-light-primary bg-panel-bg flex items-center justify-center gap-1.5 cursor-pointer">
             <span class="material-symbols-outlined text-[16px]" aria-hidden="true">layers</span>
             <span data-design-text-token="title-sm">Layer Spasial</span>
           </button>
           <button id="tab-btn-legend" type="button" role="tab" aria-selected="false"
+            aria-controls="tab-panel-legend" tabindex="-1"
             class="py-2.5 px-gutter-sm font-title text-title-sm text-light-on-surface-variant border-b-2 border-transparent hover:text-light-on-surface flex items-center justify-center gap-1.5 cursor-pointer">
             <span class="material-symbols-outlined text-[16px]" aria-hidden="true">legend_toggle</span>
             <span data-design-text-token="title-sm">Legenda</span>
@@ -743,6 +745,16 @@
                 <span class="inline-block w-6 h-1 bg-road-vector rounded-sm"></span>
                 <span class="font-body text-body-sm text-light-on-surface-variant"
                   data-design-text-token="body-sm">Jalan Provinsi Jawa Barat</span>
+              </div>
+            </div>
+
+            <div class="border-t border-border-crisp pt-gutter-sm">
+              <h3 class="font-title text-title-sm text-light-on-surface mb-1.5" data-design-text-token="title-sm">
+                Batas Wilayah</h3>
+              <div class="flex items-center gap-2">
+                <span class="inline-block w-6 h-3 rounded-sm border border-cobalt-blue bg-cobalt-blue/20"></span>
+                <span class="font-body text-body-sm text-light-on-surface-variant"
+                  data-design-text-token="body-sm">Batas Wilayah Jawa Barat</span>
               </div>
             </div>
 
@@ -2011,13 +2023,39 @@
         document.getElementById('right-sidebar').classList.toggle('hidden');
         setTimeout(() => map.invalidateSize(), 50);
       });
-      document.getElementById('tab-btn-layers').addEventListener('click', () => {
-        document.getElementById('tab-panel-layers').classList.remove('hidden');
-        document.getElementById('tab-panel-legend').classList.add('hidden');
-      });
-      document.getElementById('tab-btn-legend').addEventListener('click', () => {
-        document.getElementById('tab-panel-layers').classList.add('hidden');
-        document.getElementById('tab-panel-legend').classList.remove('hidden');
+      const tabButtons = {
+        layers: document.getElementById('tab-btn-layers'),
+        legend: document.getElementById('tab-btn-legend')
+      };
+      const tabPanels = {
+        layers: document.getElementById('tab-panel-layers'),
+        legend: document.getElementById('tab-panel-legend')
+      };
+
+      function setSidebarTab(activeTab) {
+        Object.entries(tabButtons).forEach(([name, button]) => {
+          const active = name === activeTab;
+          button.setAttribute('aria-selected', String(active));
+          button.tabIndex = active ? 0 : -1;
+          button.classList.toggle('text-light-primary', active);
+          button.classList.toggle('border-light-primary', active);
+          button.classList.toggle('bg-panel-bg', active);
+          button.classList.toggle('text-light-on-surface-variant', !active);
+          button.classList.toggle('border-transparent', !active);
+          button.classList.toggle('hover:text-light-on-surface', !active);
+          tabPanels[name].classList.toggle('hidden', !active);
+        });
+      }
+
+      tabButtons.layers.addEventListener('click', () => setSidebarTab('layers'));
+      tabButtons.legend.addEventListener('click', () => setSidebarTab('legend'));
+      tabButtons.layers.closest('[role="tablist"]').addEventListener('keydown', event => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        const activeTab = tabButtons.layers.getAttribute('aria-selected') === 'true' ? 'layers' : 'legend';
+        const nextTab = activeTab === 'layers' ? 'legend' : 'layers';
+        setSidebarTab(nextTab);
+        tabButtons[nextTab].focus();
       });
 
       // Metodologi modal
