@@ -65,7 +65,7 @@ Ekstraksi spasial dilakukan pada radius *buffer* $500\text{ m}$ di sekitar 297 s
 ### A. Preprocessing & Feature Engineering
 1. **Reproyeksi Spasial:** Seluruh layer vektor dan raster dikonversi ke sistem koordinat metrik **WGS 84 / UTM Zone 48S (`EPSG:32748`)** agar perhitungan jarak *buffer* $500\text{ m}$ dan panjang segmen ($\text{km}$) presisi.
 2. **Transformasi Fitur Sirkular:** Variabel sudut arah hadap lereng (*aspect*) ditransformasikan menjadi dua komponen trigonometri untuk menjaga kontinuitas sudut antara $0^\circ$ dan $360^\circ$:
-   $$\text{aspect\_sin} = \sin\left(\frac{\text{aspect} \times \pi}{180}\right), \quad \text{aspect\_cos} = \cos\left(\frac{\text{aspect} \times \pi}{180}\right)$$
+   $$aspect_{sin} = \sin\left(\frac{aspect \times \pi}{180}\right), \qquad aspect_{cos} = \cos\left(\frac{aspect \times \pi}{180}\right)$$
 3. **Uji Multikolinearitas (VIF):** Seluruh 5 fitur numerik memiliki nilai $\text{VIF} < 1.50$, membuktikan tidak adanya multikolinearitas antar-prediktor:
    * `elevation`: $1.1716$
    * `slope`: $1.4550$
