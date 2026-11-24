@@ -245,6 +245,144 @@
         linear-gradient(to bottom, rgba(100, 116, 139, 0.12) 1px, transparent 1px);
       background-size: 36px 36px;
     }
+
+    @media (max-width: 767px) {
+      body,
+      #app-shell {
+        height: 100dvh;
+      }
+
+      #app-shell > header {
+        height: 52px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      #app-shell > header h1 {
+        max-width: 180px;
+        font-size: 11px;
+      }
+
+      #app-shell > header > div:first-child {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .desktop-title {
+        display: none;
+      }
+
+      .mobile-title {
+        display: inline;
+      }
+
+      #header-actions {
+        margin-left: auto;
+        gap: 4px;
+      }
+
+      #header-actions > :not(label) {
+        display: none;
+      }
+
+      #header-search-input {
+        width: 116px;
+      }
+
+      #header-actions > label {
+        width: 116px;
+      }
+
+      #mobile-drawer {
+        position: fixed;
+        inset: auto 0 0;
+        z-index: 40;
+        display: flex;
+        flex-direction: column;
+        max-height: 78dvh;
+        background: #F8FAFC;
+        border-top: 1px solid #E2E8F0;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.18);
+        transform: translateY(calc(100% - 48px));
+        transition: transform 200ms ease-out;
+      }
+
+      #mobile-drawer.is-open {
+        transform: translateY(0);
+      }
+
+      #mobile-drawer-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 48px;
+        flex: 0 0 48px;
+        border-bottom: 1px solid #E2E8F0;
+        color: #00609A;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      #mobile-drawer-panels {
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+
+      #mobile-drawer-panels > #left-sidebar,
+      #mobile-drawer-panels > #right-sidebar {
+        display: flex;
+        width: 100%;
+        max-height: none;
+        height: auto;
+        border: 0;
+        overflow: visible;
+      }
+
+      #mobile-drawer-panels > #left-sidebar {
+        border-bottom: 1px solid #E2E8F0;
+      }
+
+      #mobile-drawer-panels > #right-sidebar {
+        padding: 12px;
+      }
+
+      #mobile-drawer-panels > #sidebar-legal-footer {
+        display: block;
+        width: 100%;
+        border-top: 1px solid #E2E8F0;
+        border-bottom: 0;
+        padding: 12px;
+      }
+
+      #floating-node-popup {
+        width: min(240px, calc(100vw - 24px));
+      }
+
+      #status-coords {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      #mobile-drawer-panels .layer-drag-handle {
+        display: none;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .mobile-title {
+        display: none;
+      }
+
+      #mobile-drawer,
+      #mobile-drawer-toggle {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -263,7 +401,8 @@
           class="w-9 h-9 object-contain shrink-0 rounded-full border border-white/30 bg-white p-0.5">
         <div class="flex items-center gap-gutter-sm min-w-0">
           <h1 class="font-headline text-title-md text-on-header-slate truncate" data-design-text-token="title-md">
-            Portal Geospasial Kerawanan Tanah Longsor
+            <span class="desktop-title">Portal Geospasial Kerawanan Tanah Longsor</span>
+            <span class="mobile-title">PGKTL</span>
           </h1>
         </div>
       </div>
@@ -292,7 +431,7 @@
       </div>
 
       <!-- Right: Search + Metodologi Engine + Basemap Switcher + Panel Toggles -->
-      <div class="flex items-center gap-gutter-sm shrink-0">
+      <div id="header-actions" class="flex items-center gap-gutter-sm shrink-0">
         <!-- Search Coordinate / Road Corridor -->
         <label data-component-id="input-field-icon" data-component-type="input-field" data-component-variant="with-icon"
           class="relative flex items-center w-56">
@@ -373,7 +512,7 @@
               Sekolah Vokasi<br>
               IPB University
             </p>
-            <p class="mt-2 font-label text-label-sm">Copyright 2026</p>
+            <p class="mt-2 font-label text-label-sm">&copy; 2026 Developers</p>
           </section>
           <section class="border-t border-border-crisp pt-gutter-md">
             <h3 class="font-label text-label-sm uppercase text-light-on-surface-variant mb-1.5">Sumber Data</h3>
@@ -628,7 +767,9 @@
           </div>
         </div>
 
-        <footer class="shrink-0 border-t border-border-crisp bg-light-surface px-gutter-md py-gutter-sm">
+        <footer id="sidebar-legal-footer"
+          class="shrink-0 border-t border-border-crisp bg-light-surface px-gutter-md py-gutter-sm">
+          <p class="text-center font-label text-label-sm text-light-on-surface-variant mb-1.5">&copy; 2026 Authors</p>
           <nav class="flex items-center justify-center gap-2" aria-label="Informasi legal">
             <button id="btn-terms" type="button"
               class="font-label text-label-sm text-light-primary hover:text-cobalt-blue underline-offset-2 hover:underline cursor-pointer">
@@ -990,6 +1131,15 @@
       </aside>
     </div>
 
+    <!-- Mobile bottom drawer containing all non-map panels -->
+    <div id="mobile-drawer" aria-label="Panel kontrol dan hasil">
+      <button id="mobile-drawer-toggle" type="button" aria-expanded="false" aria-controls="mobile-drawer-panels">
+        <span class="material-symbols-outlined text-[18px]" aria-hidden="true">expand_less</span>
+        <span>Panel Kontrol &amp; Hasil</span>
+      </button>
+      <div id="mobile-drawer-panels"></div>
+    </div>
+
     <!-- METODOLOGI ENGINE MODAL -->
     <div id="methodology-modal"
       class="hidden fixed inset-0 z-50 bg-light-on-surface/50 flex items-center justify-center p-gutter-lg"
@@ -1078,6 +1228,51 @@
         fadeAnimation: false,
         markerZoomAnimation: false
       });
+      const mobileDrawer = document.getElementById('mobile-drawer');
+      const mobileDrawerToggle = document.getElementById('mobile-drawer-toggle');
+      const mobileDrawerPanels = document.getElementById('mobile-drawer-panels');
+      const leftSidebar = document.getElementById('left-sidebar');
+      const rightSidebar = document.getElementById('right-sidebar');
+      const legalFooter = document.getElementById('sidebar-legal-footer');
+      const leftSidebarParent = leftSidebar.parentNode;
+      const rightSidebarParent = rightSidebar.parentNode;
+      const legalFooterParent = legalFooter.parentNode;
+      const leftSidebarNextSibling = leftSidebar.nextSibling;
+      const rightSidebarNextSibling = rightSidebar.nextSibling;
+      const legalFooterNextSibling = legalFooter.nextSibling;
+      const mobileLayoutQuery = window.matchMedia('(max-width: 767px)');
+
+      function syncMobileLayout() {
+        if (mobileLayoutQuery.matches) {
+          if (leftSidebar.parentNode !== mobileDrawerPanels) mobileDrawerPanels.appendChild(leftSidebar);
+          if (rightSidebar.parentNode !== mobileDrawerPanels) mobileDrawerPanels.appendChild(rightSidebar);
+          if (legalFooter.parentNode !== mobileDrawerPanels) mobileDrawerPanels.appendChild(legalFooter);
+        } else {
+          if (leftSidebar.parentNode !== leftSidebarParent) {
+            leftSidebarParent.insertBefore(leftSidebar, leftSidebarNextSibling);
+          }
+          if (rightSidebar.parentNode !== rightSidebarParent) {
+            rightSidebarParent.insertBefore(rightSidebar, rightSidebarNextSibling);
+          }
+          if (legalFooter.parentNode !== legalFooterParent) {
+            legalFooterParent.insertBefore(legalFooter, legalFooterNextSibling);
+          }
+          mobileDrawer.classList.remove('is-open');
+          mobileDrawerToggle.setAttribute('aria-expanded', 'false');
+        }
+        map.invalidateSize();
+      }
+
+      mobileDrawerToggle.addEventListener('click', () => {
+        const isOpen = mobileDrawer.classList.toggle('is-open');
+        mobileDrawerToggle.setAttribute('aria-expanded', String(isOpen));
+        mobileDrawerToggle.querySelector('.material-symbols-outlined').textContent =
+          isOpen ? 'expand_more' : 'expand_less';
+        window.setTimeout(() => map.invalidateSize(), 220);
+      });
+      mobileLayoutQuery.addEventListener('change', syncMobileLayout);
+      syncMobileLayout();
+
       const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
       const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18 });
       window.gisMap = map;
