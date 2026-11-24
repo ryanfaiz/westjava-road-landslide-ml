@@ -83,7 +83,31 @@ for col in gdf_jalan.columns:
 gdf_jalan["geometry"] = gdf_jalan.geometry.simplify(0.001)
 ROADS_GEOJSON = json.loads(gdf_jalan.to_json())
 
+wilayah_file = os.path.join(
+    DATA_DIR,
+    "batas_wilayah_jawa_barat",
+    "batas_wilayah_jawa_barat.shp",
+)
+gdf_wilayah = gpd.read_file(wilayah_file)
+wilayah_bounds = gdf_wilayah.total_bounds
+coordinates_are_wgs84 = (
+    -180 <= wilayah_bounds[0] <= 180
+    and -180 <= wilayah_bounds[2] <= 180
+    and -90 <= wilayah_bounds[1] <= 90
+    and -90 <= wilayah_bounds[3] <= 90
+)
+if coordinates_are_wgs84:
+    gdf_wilayah = gdf_wilayah.set_crs("EPSG:4326", allow_override=True)
+else:
+    gdf_wilayah = gdf_wilayah.to_crs("EPSG:4326")
+gdf_wilayah["geometry"] = gdf_wilayah.geometry.simplify(
+    tolerance=0.002,
+    preserve_topology=True,
+)
+WILAYAH_GEOJSON = json.loads(gdf_wilayah.to_json())
+
 MAP_NODES_CACHE = None
+WILAYAH_CACHE = None
 
 
 def classify_risk(prob: float):
@@ -145,6 +169,18 @@ def get_map_layers():
         MAP_NODES_CACHE = {"nodes": nodes, "roads": ROADS_GEOJSON}
     return JSONResponse(
         content=MAP_NODES_CACHE,
+        headers={"Cache-Control": "public, max-age=3600"},
+    )
+
+
+@app.get("/api/layers/wilayah-jawa-barat")
+def get_wilayah_layer():
+    """Mengirim batas wilayah Jawa Barat dalam koordinat WGS84."""
+    global WILAYAH_CACHE
+    if WILAYAH_CACHE is None:
+        WILAYAH_CACHE = WILAYAH_GEOJSON
+    return JSONResponse(
+        content=WILAYAH_CACHE,
         headers={"Cache-Control": "public, max-age=3600"},
     )
 
