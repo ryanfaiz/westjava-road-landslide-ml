@@ -933,7 +933,7 @@
           class="bg-light-surface border border-border-crisp rounded-md flex flex-col shrink-0 overflow-hidden">
           <header class="px-gutter-sm py-1.5 border-b border-border-crisp bg-light-surface-container">
             <h2 class="font-title text-title-sm text-light-on-surface" data-design-text-token="title-sm">Grafik
-              Parameter Lereng (Skala Independen)</h2>
+              Parameter Lereng</h2>
           </header>
           <div class="p-gutter-sm flex flex-col gap-2">
             <!-- Elevation -->
@@ -1148,6 +1148,7 @@
       }
 
       let predictionDataReady = false;
+      let predictionRequestVersion = 0;
 
       function setPredictionReady(ready) {
         predictionDataReady = ready;
@@ -1158,7 +1159,21 @@
         return `${Number(lat).toFixed(5)}|${Number(lon).toFixed(5)}`;
       }
 
+      function resetPredictionResults() {
+        document.getElementById('card-ml-table').classList.add('hidden');
+        document.getElementById('card-dss').classList.add('hidden');
+        document.getElementById('ml-comparison-tbody').replaceChildren();
+        document.getElementById('dss-recommendation-text').textContent =
+          'Hasil prediksi akan ditampilkan setelah prediksi dijalankan untuk lokasi ini.';
+        const alertBadge = document.getElementById('dss-alert-badge');
+        alertBadge.querySelector('span:last-child').textContent = 'SIAGA';
+        alertBadge.style.backgroundColor = '';
+        alertBadge.title = '';
+      }
+
       function invalidatePredictionData() {
+        predictionRequestVersion += 1;
+        resetPredictionResults();
         setPredictionReady(false);
       }
 
@@ -1414,6 +1429,7 @@
       async function runPrediction() {
         const button = document.getElementById('btn-run-prediction');
         if (!predictionDataReady) return;
+        const requestVersion = predictionRequestVersion;
         button.disabled = true;
         const readFiniteNumber = (id, fallback = 0) => {
           const value = Number(document.getElementById(id).value);
@@ -1433,6 +1449,7 @@
           });
           if (!res.ok) throw new Error(`Prediksi gagal (${res.status})`);
           const data = await res.json();
+          if (requestVersion !== predictionRequestVersion) return;
 
           const comparisonBody = document.getElementById('ml-comparison-tbody');
           comparisonBody.replaceChildren();
