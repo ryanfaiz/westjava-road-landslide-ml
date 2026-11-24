@@ -662,6 +662,11 @@
               class="w-7 h-7 flex items-center justify-center rounded hover:bg-light-surface-container text-light-on-surface cursor-pointer">
               <span class="material-symbols-outlined text-[17px]">my_location</span>
             </button>
+            <button id="map-coordinate-picker" type="button" title="Ambil Koordinat Titik Peta"
+              aria-label="Ambil Koordinat Titik Peta" aria-pressed="false"
+              class="w-7 h-7 flex items-center justify-center rounded hover:bg-light-surface-container text-light-on-surface cursor-pointer">
+              <span class="material-symbols-outlined text-[17px]">pin_drop</span>
+            </button>
           </div>
 
           <!-- Floating Map Popup Sample on Selected Node (Top-Right of Map Canvas) -->
@@ -1109,6 +1114,65 @@
         map.setView([-6.9147, 107.6098], 9);
       });
 
+      let coordinatePickerActive = false;
+      let coordinatePickerMarker = null;
+      const coordinatePickerButton = document.getElementById('map-coordinate-picker');
+
+      function setCoordinatePickerMode(active) {
+        coordinatePickerActive = active;
+        coordinatePickerButton.setAttribute('aria-pressed', String(active));
+        coordinatePickerButton.classList.toggle('bg-cobalt-blue', active);
+        coordinatePickerButton.classList.toggle('text-on-cobalt-blue', active);
+        coordinatePickerButton.classList.toggle('hover:bg-light-surface-container', !active);
+        document.getElementById('gis-map').style.cursor = active ? 'crosshair' : '';
+        setGISStatus(active
+          ? 'Mode koordinat aktif: klik lokasi sembarang pada peta'
+          : 'Mode koordinat dinonaktifkan');
+      }
+
+      function updateRandomLocationPopup(lat, lon) {
+        document.getElementById('popup-node-title').textContent = 'Lokasi Acak';
+        document.getElementById('popup-road-name').textContent = '-';
+        document.getElementById('popup-coords').textContent =
+          `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+        document.getElementById('popup-prob').textContent = '-';
+
+        const badge = document.getElementById('popup-badge');
+        badge.textContent = '-';
+        badge.style.backgroundColor = '#CBD5E1';
+        badge.classList.remove('text-light-on-surface');
+        badge.classList.add('text-light-on-surface');
+        document.getElementById('btn-popup-extract').classList.add('hidden');
+        document.getElementById('floating-node-popup').classList.remove('hidden');
+      }
+
+      coordinatePickerButton.addEventListener('click', () => {
+        setCoordinatePickerMode(!coordinatePickerActive);
+      });
+
+      map.on('click', event => {
+        if (!coordinatePickerActive) return;
+
+        const lat = event.latlng.lat;
+        const lon = event.latlng.lng;
+        document.getElementById('input-lat').value = lat.toFixed(5);
+        document.getElementById('input-lon').value = lon.toFixed(5);
+        document.getElementById('status-coords').textContent =
+          `Lat: ${lat.toFixed(5)}, Lon: ${lon.toFixed(5)}`;
+
+        if (coordinatePickerMarker) map.removeLayer(coordinatePickerMarker);
+        coordinatePickerMarker = L.circleMarker([lat, lon], {
+          radius: 7,
+          color: '#FFFFFF',
+          weight: 2,
+          fillColor: '#0079C1',
+          fillOpacity: 1
+        }).addTo(map);
+
+        updateRandomLocationPopup(lat, lon);
+        setGISStatus(`Koordinat dipilih: ${lat.toFixed(5)}, ${lon.toFixed(5)}`);
+      });
+
       let userLocationMarker = null;
       document.getElementById('map-identify').addEventListener('click', () => {
         if (!window.isSecureContext) {
@@ -1258,6 +1322,9 @@
         const badge = document.getElementById('popup-badge');
         badge.textContent = node.status;
         badge.style.backgroundColor = node.color;
+        badge.classList.remove('text-light-on-surface');
+        badge.classList.add('text-light-on-surface');
+        document.getElementById('btn-popup-extract').classList.remove('hidden');
         document.getElementById('floating-node-popup').classList.remove('hidden');
       }
 
