@@ -1009,7 +1009,7 @@
         </section>
 
         <!-- Section B: Parameter Lereng & Hidrologi (2x2 Grid) -->
-        <section
+        <section id="parameter-lereng-section"
           class="flex flex-col gap-gutter-sm bg-light-surface border border-border-crisp rounded-md p-gutter-md shrink-0">
           <header class="flex items-center gap-2 border-b border-border-crisp pb-gutter-xs">
             <span class="material-symbols-outlined text-[18px] text-cobalt-blue" aria-hidden="true">terrain</span>
@@ -1335,6 +1335,17 @@
           mobileDrawerToggle.querySelector('.material-symbols-outlined').textContent = 'expand_more';
         }
         window.setTimeout(() => map.invalidateSize(), 220);
+      }
+
+      function scrollToParameterSectionOnMobile() {
+        if (!mobileLayoutQuery.matches) return;
+        const parameterSection = document.getElementById('parameter-lereng-section');
+        if (!parameterSection) return;
+        requestAnimationFrame(() => {
+          window.setTimeout(() => {
+            parameterSection.scrollIntoView({ block: 'start', behavior: 'smooth' });
+          }, 220);
+        });
       }
 
       mobileDrawerToggle.addEventListener('click', () => {
@@ -1914,6 +1925,7 @@
       });
       document.getElementById('btn-popup-extract').addEventListener('click', () => {
         openProcessingPanel();
+        scrollToParameterSectionOnMobile();
         if (popupSelectionType === 'random') {
           document.getElementById('btn-extract-gis').click();
           return;
