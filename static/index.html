@@ -436,10 +436,20 @@
                 </div>
                 <span class="w-2.5 h-2.5 rounded-full bg-risk-high shrink-0"></span>
               </div>
-              <div class="flex items-center gap-2 pl-5">
-                <span class="font-body text-body-sm text-light-outline" data-design-text-token="body-sm">Opasitas</span>
-                <input id="layer-op-nodes" type="range" min="10" max="100" value="95"
-                  class="w-full h-1 accent-cobalt-blue cursor-pointer">
+              <div class="flex flex-col gap-1.5 pl-5">
+                <div class="flex items-center gap-2">
+                  <span class="font-body text-body-sm text-light-outline min-w-[52px]" data-design-text-token="body-sm">Opasitas</span>
+                  <input id="layer-op-nodes" type="range" min="10" max="100" value="95"
+                    class="w-full h-1 accent-cobalt-blue cursor-pointer">
+                </div>
+                <div class="flex items-center gap-2">
+                  <label for="layer-size-nodes" class="font-body text-body-sm text-light-outline min-w-[52px]"
+                    data-design-text-token="body-sm">Ukuran</label>
+                  <input id="layer-size-nodes" type="range" min="3" max="8" step="0.5" value="4.5"
+                    aria-label="Ukuran titik prediksi" class="w-full h-1 accent-cobalt-blue cursor-pointer">
+                  <output id="layer-size-nodes-value" for="layer-size-nodes"
+                    class="font-mono text-mono-sm text-light-on-surface-variant min-w-[28px] text-right">4.5</output>
+                </div>
               </div>
             </div>
 
@@ -1283,13 +1293,14 @@
 
       // Render 632 Titik Prediksi LR
       const nodeGroup = L.featureGroup();
+      let nodeRadius = 4.5;
       let markerBatchIndex = 0;
       function renderNodeBatch() {
         const batchEnd = Math.min(markerBatchIndex + 64, sampleNodes.length);
         for (; markerBatchIndex < batchEnd; markerBatchIndex += 1) {
           const n = sampleNodes[markerBatchIndex];
           L.circleMarker([n.lat, n.lon], {
-            radius: 4.5,
+            radius: nodeRadius,
             color: n.color,
             weight: 1.5,
             fillColor: n.color,
@@ -1668,6 +1679,7 @@
 
       // Opacity controls
       let nodeOpacityFrame = null;
+      let nodeSizeFrame = null;
       document.getElementById('layer-op-nodes').addEventListener('input', e => {
         const opacity = Number(e.target.value) / 100;
         if (nodeOpacityFrame !== null) cancelAnimationFrame(nodeOpacityFrame);
@@ -1677,6 +1689,17 @@
             fillOpacity: opacity
           }));
           nodeOpacityFrame = null;
+        });
+      });
+      document.getElementById('layer-size-nodes').addEventListener('input', e => {
+        nodeRadius = Math.min(8, Math.max(3, Number(e.target.value)));
+        document.getElementById('layer-size-nodes-value').value = nodeRadius.toFixed(1);
+        if (nodeSizeFrame !== null) cancelAnimationFrame(nodeSizeFrame);
+        nodeSizeFrame = requestAnimationFrame(() => {
+          nodeGroup.eachLayer(layer => {
+            if (typeof layer.setRadius === 'function') layer.setRadius(nodeRadius);
+          });
+          nodeSizeFrame = null;
         });
       });
       document.getElementById('layer-op-roads').addEventListener('input', e => {
