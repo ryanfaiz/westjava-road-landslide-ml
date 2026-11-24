@@ -863,7 +863,8 @@
         <!-- Primary CTA Button -->
         <button id="btn-run-prediction" data-component-id="button-with-icon" data-component-type="button"
           data-component-variant="with-icon" type="button"
-          class="w-full shrink-0 inline-flex items-center justify-center gap-2 px-gutter-lg py-2.5 bg-cobalt-blue text-on-cobalt-blue rounded font-label text-label-lg font-semibold hover:bg-light-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-blue transition-colors duration-state-change cursor-pointer shadow-sm">
+          disabled
+          class="w-full shrink-0 inline-flex items-center justify-center gap-2 px-gutter-lg py-2.5 bg-cobalt-blue text-on-cobalt-blue rounded font-label text-label-lg font-semibold hover:bg-light-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-blue transition-colors duration-state-change cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-cobalt-blue">
           <span class="material-symbols-outlined text-[18px]" aria-hidden="true">play_arrow</span>
           <span data-design-text-token="label-lg">Jalankan Prediksi Komparasi Multi-Model</span>
         </button>
@@ -1140,6 +1141,26 @@
           : 'Mode koordinat dinonaktifkan');
       }
 
+      let predictionDataReady = false;
+
+      function setPredictionReady(ready) {
+        predictionDataReady = ready;
+        document.getElementById('btn-run-prediction').disabled = !ready;
+      }
+
+      function getCoordinateKey(lat, lon) {
+        return `${Number(lat).toFixed(5)}|${Number(lon).toFixed(5)}`;
+      }
+
+      function invalidatePredictionData() {
+        setPredictionReady(false);
+      }
+
+      setPredictionReady(false);
+      document.getElementById('input-lat').addEventListener('input', invalidatePredictionData);
+      document.getElementById('input-lon').addEventListener('input', invalidatePredictionData);
+      document.getElementById('input-node-index').addEventListener('input', invalidatePredictionData);
+
       function updateRandomLocationPopup(lat, lon) {
         document.getElementById('popup-node-title').textContent = 'Lokasi Acak';
         document.getElementById('popup-road-name').textContent = '-';
@@ -1167,6 +1188,7 @@
         const lon = event.latlng.lng;
         document.getElementById('input-lat').value = lat.toFixed(5);
         document.getElementById('input-lon').value = lon.toFixed(5);
+        invalidatePredictionData();
         document.getElementById('status-coords').textContent =
           `Lat: ${lat.toFixed(5)}, Lon: ${lon.toFixed(5)}`;
 
@@ -1193,6 +1215,7 @@
           setGISStatus('Browser tidak mendukung akses lokasi');
           return;
         }
+        invalidatePredictionData();
         setGISStatus('Meminta izin akses lokasi...');
         navigator.geolocation.getCurrentPosition(position => {
           const lat = position.coords.latitude;
@@ -1208,6 +1231,7 @@
           map.setView([lat, lon], 13);
           document.getElementById('input-lat').value = lat.toFixed(5);
           document.getElementById('input-lon').value = lon.toFixed(5);
+          invalidatePredictionData();
           setGISStatus(`Lokasi pengguna ditemukan: ${lat.toFixed(5)}, ${lon.toFixed(5)}`);
         }, error => {
           const messages = {
@@ -1353,6 +1377,7 @@
       }
 
       async function loadByIndex(idx) {
+        invalidatePredictionData();
         const d = await (await fetch(`/api/node/${idx}`)).json();
         document.getElementById('input-lat').value = d.lat;
         document.getElementById('input-lon').value = d.lon;
@@ -1364,10 +1389,12 @@
         updateParameterChart(d);
         updatePopup(sampleNodes.find(n => n.idx === idx));
         map.setView([d.lat, d.lon], 12);
+        setPredictionReady(true);
       }
 
       async function runPrediction() {
         const button = document.getElementById('btn-run-prediction');
+        if (!predictionDataReady) return;
         button.disabled = true;
         const readFiniteNumber = (id, fallback = 0) => {
           const value = Number(document.getElementById(id).value);
@@ -1427,7 +1454,7 @@
         } catch (error) {
           setGISStatus(error.message);
         } finally {
-          button.disabled = false;
+          button.disabled = !predictionDataReady;
         }
       }
 
@@ -1445,19 +1472,31 @@
         const lon = Number(document.getElementById('input-lon').value);
         if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lon) || lon < -180 || lon > 180) {
           setGISStatus('Koordinat tidak valid');
+          invalidatePredictionData();
           return;
         }
+        const requestedCoordinate = getCoordinateKey(lat, lon);
+        invalidatePredictionData();
         const d = await (await fetch('/api/idw', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lat, lon })
         })).json();
+        const currentCoordinate = getCoordinateKey(
+          document.getElementById('input-lat').value,
+          document.getElementById('input-lon').value
+        );
+        if (currentCoordinate !== requestedCoordinate) {
+          setGISStatus('Koordinat berubah saat atribut diekstrak. Ekstrak ulang koordinat terbaru.');
+          return;
+        }
         document.getElementById('input-elevation').value = d.elevation;
         document.getElementById('input-slope').value = d.slope;
         document.getElementById('input-rainfall').value = d.rainfall;
         document.getElementById('input-aspect').value = d.aspect;
         setGISStatus(d.status);
         updateParameterChart(d);
+        setPredictionReady(true);
       });
 
       document.getElementById('btn-run-prediction').addEventListener('click', runPrediction);
@@ -1610,6 +1649,7 @@
 
       // Coordinate / road corridor search
       async function runCoordinateSearch(lat, lon) {
+        invalidatePredictionData();
         document.getElementById('input-lat').value = lat;
         document.getElementById('input-lon').value = lon;
         map.setView([lat, lon], 12);
@@ -1624,6 +1664,7 @@
         document.getElementById('input-aspect').value = d.aspect;
         setGISStatus(d.status);
         updateParameterChart(d);
+        setPredictionReady(true);
       }
 
       const searchInput = document.getElementById('header-search-input');
