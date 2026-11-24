@@ -942,7 +942,7 @@
                 <span class="font-body text-body-sm text-light-on-surface-variant"
                   data-design-text-token="body-sm">Elevation</span>
                 <span id="chart-val-elev" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
-                  data-design-text-token="mono-sm">652.25 m</span>
+                  data-design-text-token="mono-sm">652.25 m / -- m</span>
               </div>
               <div class="w-full h-1.5 bg-light-surface-container rounded-full overflow-hidden">
                 <div id="chart-bar-elev" class="h-full bg-cobalt-blue rounded-full" style="width: 43%;"></div>
@@ -954,7 +954,7 @@
                 <span class="font-body text-body-sm text-light-on-surface-variant"
                   data-design-text-token="body-sm">Slope</span>
                 <span id="chart-val-slope" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
-                  data-design-text-token="mono-sm">7.99°</span>
+                  data-design-text-token="mono-sm">7.99° / --°</span>
               </div>
               <div class="w-full h-1.5 bg-light-surface-container rounded-full overflow-hidden">
                 <div id="chart-bar-slope" class="h-full bg-risk-medium rounded-full" style="width: 22%;"></div>
@@ -966,7 +966,7 @@
                 <span class="font-body text-body-sm text-light-on-surface-variant"
                   data-design-text-token="body-sm">Rainfall</span>
                 <span id="chart-val-rain" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
-                  data-design-text-token="mono-sm">2914.77 mm</span>
+                  data-design-text-token="mono-sm">2914.77 mm / -- mm</span>
               </div>
               <div class="w-full h-1.5 bg-light-surface-container rounded-full overflow-hidden">
                 <div id="chart-bar-rain" class="h-full bg-risk-high rounded-full" style="width: 78%;"></div>
@@ -978,7 +978,7 @@
                 <span class="font-body text-body-sm text-light-on-surface-variant"
                   data-design-text-token="body-sm">Aspect</span>
                 <span id="chart-val-aspect" class="font-mono text-mono-sm text-light-on-surface tabular-nums"
-                  data-design-text-token="mono-sm">117.48°</span>
+                  data-design-text-token="mono-sm">117.48° / --°</span>
               </div>
               <div class="w-full h-1.5 bg-light-surface-container rounded-full overflow-hidden">
                 <div id="chart-bar-aspect" class="h-full bg-light-secondary rounded-full" style="width: 33%;"></div>
@@ -1062,6 +1062,12 @@
       // 1. Ambil 632 Node & GeoJSON Jalan Provinsi langsung dari FastAPI
       const res = await fetch('/api/layers');
       const { nodes: sampleNodes, roads: roadsGeoJson } = await res.json();
+      updateParameterChart({
+        elevation: Number(document.getElementById('input-elevation').value),
+        slope: Number(document.getElementById('input-slope').value),
+        rainfall: Number(document.getElementById('input-rainfall').value),
+        aspect: Number(document.getElementById('input-aspect').value)
+      });
 
       const map = L.map('gis-map', {
         center: [-6.9147, 107.6098],
@@ -1364,10 +1370,23 @@
       }
 
       function updateParameterChart(d) {
-        document.getElementById('chart-val-elev').textContent = `${d.elevation.toFixed(2)} m`;
-        document.getElementById('chart-val-slope').textContent = `${d.slope.toFixed(2)}°`;
-        document.getElementById('chart-val-rain').textContent = `${d.rainfall.toFixed(2)} mm`;
-        document.getElementById('chart-val-aspect').textContent = `${d.aspect.toFixed(2)}°`;
+        const elevationMax = Math.max(...sampleNodes.map(n => n.elev), d.elevation);
+        const slopeMax = Math.max(...sampleNodes.map(n => n.slope), d.slope);
+        const rainfallMax = Math.max(...sampleNodes.map(n => n.rain), d.rainfall);
+        const aspectMax = Math.max(...sampleNodes.map(n => n.aspect), d.aspect);
+
+        const setParameterDisplay = (valueId, barId, value, maximum, unit) => {
+          const safeMaximum = Math.max(maximum, Number.EPSILON);
+          const percentage = Math.min(100, Math.max(0, (value / safeMaximum) * 100));
+          document.getElementById(valueId).textContent =
+            `${value.toFixed(2)}${unit} / ${maximum.toFixed(2)}${unit}`;
+          document.getElementById(barId).style.width = `${percentage.toFixed(2)}%`;
+        };
+
+        setParameterDisplay('chart-val-elev', 'chart-bar-elev', d.elevation, elevationMax, ' m');
+        setParameterDisplay('chart-val-slope', 'chart-bar-slope', d.slope, slopeMax, '°');
+        setParameterDisplay('chart-val-rain', 'chart-bar-rain', d.rainfall, rainfallMax, ' mm');
+        setParameterDisplay('chart-val-aspect', 'chart-bar-aspect', d.aspect, aspectMax, '°');
       }
 
       function setGISStatus(message) {
