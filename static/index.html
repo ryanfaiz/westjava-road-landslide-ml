@@ -1340,10 +1340,10 @@
           document.getElementById('dss-recommendation-text').textContent = data.dss;
           document.getElementById('card-ml-table').classList.remove('hidden');
           document.getElementById('card-dss').classList.remove('hidden');
-          const xgb = data.models.find(m => m.model === 'XGBoost');
-          if (xgb) {
+          if (data.dss_status) {
             const alertBadge = document.getElementById('dss-alert-badge');
-            alertBadge.querySelector('span:last-child').textContent = xgb.status;
+            alertBadge.querySelector('span:last-child').textContent = data.dss_status;
+            alertBadge.style.backgroundColor = data.dss_color || '';
           }
         } catch (error) {
           setGISStatus(error.message);
