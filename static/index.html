@@ -1344,6 +1344,7 @@
             const alertBadge = document.getElementById('dss-alert-badge');
             alertBadge.querySelector('span:last-child').textContent = data.dss_status;
             alertBadge.style.backgroundColor = data.dss_color || '';
+            alertBadge.title = 'Status DSS dihitung dari hasil Logistic Regression';
           }
         } catch (error) {
           setGISStatus(error.message);

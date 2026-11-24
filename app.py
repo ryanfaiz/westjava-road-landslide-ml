@@ -70,7 +70,6 @@ gdf_pts["prob_lr"] = model_lr.predict_proba(X_pts_scaled)[:, 1]
 gdf_pts["prob_xgb"] = model_xgb.predict_proba(X_pts_prep)[:, 1]
 
 q20, q40, q60, q80 = np.quantile(gdf_pts["prob_xgb"], [0.20, 0.40, 0.60, 0.80])
-lr_q20, lr_q40, lr_q60, lr_q80 = np.quantile(gdf_pts["prob_lr"], [0.20, 0.40, 0.60, 0.80])
 
 # Load Vektor Jalan Provinsi (mendukung .geojson maupun .shp)
 road_file = os.path.join(DATA_DIR, "jalan_provinsi.geojson")
@@ -237,27 +236,18 @@ def predict_multimodel(req: PredictRequest):
             "status": info["status"],
         })
 
-    p_lr = models[0][1]
-    if p_lr <= lr_q20:
-        dss = "Kondisi lereng sangat stabil. Pemeliharaan rutin standar pada saluran drainase jalan."
-        dss_status = "AMAN"
-        dss_color = "#2ECC71"
-    elif p_lr <= lr_q40:
-        dss = "Lereng relatif stabil. Pemantauan erosi permukaan secara berkala per 6 bulan."
-        dss_status = "STABIL"
-        dss_color = "#27AE60"
-    elif p_lr <= lr_q60:
-        dss = "Potensi pergerakan tanah sedang. Diperlukan penataan vegetasi akar dalam dan perbaikan lereng minor."
-        dss_status = "WASPADA"
-        dss_color = "#F1C40F"
-    elif p_lr <= lr_q80:
-        dss = "Prioritas Tinggi! Rekomendasi perkuatan lereng (shotcrete / soil nailing) & pembersihan drainase atas lereng."
-        dss_status = "SIAGA"
-        dss_color = "#E67E22"
+    lr_info = comparison[0]
+    dss_status = lr_info["status"]
+    dss_color = classify_risk(models[0][1])["color"]
+
+    if dss_status == "AMAN" or dss_status == "STABIL":
+        dss = "Kondisi lereng tergolong stabil berdasarkan Logistic Regression. Pemeliharaan rutin dan pemantauan drainase tetap diperlukan."
+    elif dss_status == "WASPADA":
+        dss = "Potensi pergerakan tanah sedang berdasarkan Logistic Regression. Diperlukan penataan vegetasi akar dalam dan perbaikan lereng minor."
+    elif dss_status == "SIAGA":
+        dss = "Prioritas Tinggi berdasarkan Logistic Regression! Rekomendasi perkuatan lereng (shotcrete / soil nailing) & pembersihan drainase atas lereng."
     else:
-        dss = "PRIORITAS UTAMA DINDING PENAHAN TANAH (RETAINING WALL)! Risiko kelongsoran tinggi mengancam bahu jalan."
-        dss_status = "AWAS"
-        dss_color = "#E74C3C"
+        dss = "PRIORITAS UTAMA DINDING PENAHAN TANAH (RETAINING WALL)! Berdasarkan Logistic Regression, risiko kelongsoran sangat tinggi dan mengancam bahu jalan."
 
     return {"models": comparison, "dss": dss, "dss_status": dss_status, "dss_color": dss_color}
 
